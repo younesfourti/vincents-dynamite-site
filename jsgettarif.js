@@ -18,6 +18,23 @@ $(document).ready(function() {
         $('[data-toggle="datepicker"]').attr("readonly", "readonly")
     }
 });
+
+ document.getElementById("simulationCoEmprunteur-Oui-2").addEventListener("click", function() {
+        // Sélectionnez tous les éléments avec la classe "partis-co-emprunteur"
+        var elements = document.getElementsByClassName("partis-co-emprunteur");
+        
+        // Parcourir chaque élément et modifier sa visibilité
+        for (var i = 0; i < elements.length; i++) {
+            // Vérifiez si l'élément est visible ou non
+            if (elements[i].style.display !== "none") {
+                // Si l'élément est visible, le masquer
+                elements[i].style.display = "none";
+            } else {
+                // Sinon, le rendre visible
+                elements[i].style.display = "block";
+            }
+        }
+    });
 var Webflow = Webflow || [];
 Webflow.push(function() {
     var l = $("#flowbaseSlider .w-slider-arrow-left");
