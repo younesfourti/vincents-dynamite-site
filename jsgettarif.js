@@ -19,22 +19,22 @@ $(document).ready(function() {
     }
 });
 
- document.getElementById("simulationCoEmprunteur-Oui-2").addEventListener("click", function() {
-        // Sélectionnez tous les éléments avec la classe "partis-co-emprunteur"
-        var elements = document.getElementsByClassName("partis-co-emprunteur");
-        
-        // Parcourir chaque élément et modifier sa visibilité
-        for (var i = 0; i < elements.length; i++) {
-            // Vérifiez si l'élément est visible ou non
-            if (elements[i].style.display !== "none") {
-                // Si l'élément est visible, le masquer
-                elements[i].style.display = "none";
-            } else {
-                // Sinon, le rendre visible
-                elements[i].style.display = "block";
-            }
+document.getElementById("co-emprunteur-non").addEventListener("click", function() {
+    // Sélectionnez tous les éléments avec la classe "partis-co-emprunteur"
+    var elements = document.getElementsByClassName("partis-co-emprunteur");
+
+    // Parcourir chaque élément et modifier sa visibilité
+    for (var i = 0; i < elements.length; i++) {
+        // Vérifiez si l'élément est visible ou non
+        if (elements[i].style.display !== "none") {
+            // Si l'élément est visible, le masquer
+            elements[i].style.display = "none";
+        } else {
+            // Sinon, le rendre visible
+            elements[i].style.display = "block";
         }
-    });
+    }
+});
 var Webflow = Webflow || [];
 Webflow.push(function() {
     var l = $("#flowbaseSlider .w-slider-arrow-left");
@@ -100,7 +100,7 @@ $("#range_taux").ionRangeSlider({
     hide_min_max: !0,
     decorate_both: !0,
     force_edges: !0,
-    step: .5
+    step: .1
 });
 $("#range_date-fin-credit").ionRangeSlider({
     grid: !0,
@@ -283,6 +283,56 @@ async function GetTariffs(token) {
         jsonToSend.garanties[0].quotite = "50"
     } else {
         jsonToSend.garanties[0].quotite = "100"
+    }
+    if (resultats["co-emprunteur-oui"] === "on") {
+        jsonToSend.beneficiaires.push({
+            rang_beneficiaire: "2",
+            role: "co_assure",
+            type_assure: "emprunteur",
+            date_naissance: "1999-05-04",
+            code_postal: "69008",
+            statut_professionnel: "salarie",
+            risque_km_pro: "aucun",
+            risque_travail_hauteur: "inf_15m",
+            risque_port_charges: "sup_15kg",
+            risque_fumeur: "non_fumeur",
+            risque_ppe: "aucun",
+            encours_inf_200000: "sup_200000",
+            frais_courtage: "250"
+
+        });
+        jsonToSend.beneficiaires[1].date_naissance = dateFormatee;
+        jsonToSend.beneficiaires[1].code_postal = resultats.zip;
+        jsonToSend.contrat.type_projet = resultats.type_projet;
+        jsonToSend.prets[0].taux_pret = resultats.range_taux;
+        if (resultats["differe-oui"] === "on") {
+            jsonToSend.prets[1].dont_differe_mois = resultats["range_date-differe"]
+        }
+        jsonToSend.garanties[1].package_garanties = resultats.garanties;
+        jsonToSend.beneficiaires[1].risque_fumeur = resultats["Is-Fumeur-Oui"] === "on" ? "fumeur" : "non_fumeur";
+        let charges;
+        if (resultats["risque_port_charges-15kg"] === "on") {
+            charges = "inf_15kg"
+        } else if (resultats["risque_port_charges-non"] === "on") {
+            charges = "aucun"
+        } else if (resultats["risque_port_charges-plus15kg"] === "on") {
+            charges = "sup_15kg"
+        }
+        jsonToSend.beneficiaires[1].risque_port_charges = charges;
+        let valeurHauteur;
+        if (resultats["risque_travail_hauteur-15m"] === "on") {
+            valeurHauteur = "inf_15m"
+        } else if (resultats["risque_travail_hauteur-non"] === "on") {
+            valeurHauteur = "aucun"
+        } else if (resultats["risque_travail_hauteur-plus15m"] === "on") {
+            valeurHauteur = "sup_15m"
+        } else {
+            valeurHauteur = "non_defini"
+        }
+        jsonToSend.beneficiaires[1].risque_travail_hauteur = valeurHauteur;
+        jsonToSend.beneficiaires[1].statut_professionnel = resultats.profession1;
+        jsonToSend.beneficiaires[1].risque_km_pro = resultats["risque_km_pro-oui-2"] === "on" ? "sup_20000" : "inf_20000";
+
     }
     console.log(jsonToSend);
     var myHeaders = new Headers();
