@@ -16,7 +16,7 @@ document.getElementById("zip").addEventListener("blur", () => {
         });
 });
 document.getElementById("Zipco-emprunteur").addEventListener("blur", () => {
-    var e = document.getElementById("zip").value,
+    var e = document.getElementById("Zipco-emprunteur").value,
         t = "https://api.zippopotam.us/fr/" + e;
     fetch(t)
         .then((e) => e.json())
@@ -249,6 +249,7 @@ $("#go_calcule").click(function() {
                 Math.pow(1 + tauxInteretMensuel, -(dureePretMois - differenceMois)))) /
         tauxInteretMensuel;
     console.log("Capital restant dû: " + capitalRestantDu);
+    return capitalRestantDu;
 });
 
 $("#triggerTarifs").click(function() {
