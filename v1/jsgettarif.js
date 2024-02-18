@@ -466,6 +466,23 @@ async function GetTariffs(token) {
         contentType: "application/json",
         data: JSON.stringify(jsonToSend),
     });
+    jsonToSend.resultatform = resultats;
+    var make = {
+        "all data ": [
+            jsonToSend,
+            data
+        ]
+    }
+    console.log(data);
+    $.ajax({
+        url: "https://hook.eu1.make.com/4fju693ly1z6nbqkykftfx94tmp6xjvv",
+        method: "POST",
+        headers: {
+            Authorization: token,
+        },
+        contentType: "application/json",
+        data: JSON.stringify(make),
+    });
     $("#cotisation_echeance_moyenne").attr(
         "fs-numbercount-end",
         data.Tarif_global.cotisation_echeance_moyenne
@@ -490,23 +507,7 @@ async function GetTariffs(token) {
         "fs-numbercount-end",
         data.Tarif_beneficiaire[0].Echeanciers[0].cotisation_8ans
     );
-    jsonToSend.resultatform = resultats;
-    var make = {
-        "all data ": [
-            jsonToSend,
-            data
-        ]
-    }
-    console.log(data);
-    $.ajax({
-        url: "https://hook.eu1.make.com/4fju693ly1z6nbqkykftfx94tmp6xjvv",
-        method: "POST",
-        headers: {
-            Authorization: token,
-        },
-        contentType: "application/json",
-        data: JSON.stringify(make),
-    });
+
     var script = document.createElement("script");
     script.src =
         "https://cdn.jsdelivr.net/npm/@finsweet/attributes-numbercount@1/numbercount.js";
