@@ -6,16 +6,32 @@ document.getElementById("zip").addEventListener("blur", () => {
         .then((e) => {
             var t = e.places[0]["place name"],
                 a = e.country;
-            (document.getElementById("ville").value = t),
-            (document.getElementById("pays").value = a);
+            (document.getElementById("ville-emprunteur").value = t),
+            (document.getElementById("pays-emprunteur").value = a);
         })
         .catch((e) => {
             console.error("Erreur lors de la récupération des données:", e),
-                (document.getElementById("ville").value =
+                (document.getElementById("ville-emprunteur").value =
                     "Erreur lors de la récupération des données. Veuillez réessayer.");
         });
 });
-
+document.getElementById("Zipco-emprunteur").addEventListener("blur", () => {
+    var e = document.getElementById("zip").value,
+        t = "https://api.zippopotam.us/fr/" + e;
+    fetch(t)
+        .then((e) => e.json())
+        .then((e) => {
+            var t = e.places[0]["place name"],
+                a = e.country;
+            (document.getElementById("Ville-co-emprunteur").value = t),
+            (document.getElementById("Pays-co-emprunteur").value = a);
+        })
+        .catch((e) => {
+            console.error("Erreur lors de la récupération des données:", e),
+                (document.getElementById("Ville-co-emprunteur").value =
+                    "Erreur lors de la récupération des données. Veuillez réessayer.");
+        });
+});
 $(document).ready(function() {
     $('[data-toggle="datepicker"]').datepicker({
         format: "mm-dd-yyyy",
@@ -182,12 +198,15 @@ async function updateListWithAPIdata(token) {
 }
 // Récupérer les valeurs des éléments HTML
 $("#go_calcule").click(function() {
-
-
-    var montantPret = parseFloat(document.getElementById('montant-du-pret-2').value);
-    var tauxInteret = parseFloat(document.getElementById('range_taux').value);
-    var dureePretAnnees = parseFloat(document.getElementById('range_date-credit').value);
-    var differeRemboursementMois = parseFloat(document.getElementById('range_date-differe').value) || 0; // Valeur par défaut de 0 si l'élément n'est pas rempli
+    var montantPret = parseFloat(
+        document.getElementById("montant-du-pret-2").value
+    );
+    var tauxInteret = parseFloat(document.getElementById("range_taux").value);
+    var dureePretAnnees = parseFloat(
+        document.getElementById("range_date-credit").value
+    );
+    var differeRemboursementMois =
+        parseFloat(document.getElementById("range_date-differe").value) || 0; // Valeur par défaut de 0 si l'élément n'est pas rempli
 
     console.log("Montant du prêt: " + montantPret);
     console.log("Taux d'intérêt: " + tauxInteret);
@@ -203,24 +222,32 @@ $("#go_calcule").click(function() {
     console.log("Taux d'intérêt mensuel (en décimale): " + tauxInteretMensuel);
 
     // Calculer la mensualité (formule 2)
-    var mensualite = (montantPret * tauxInteretMensuel) / (1 - Math.pow(1 + tauxInteretMensuel, -dureePretMois));
+    var mensualite =
+        (montantPret * tauxInteretMensuel) /
+        (1 - Math.pow(1 + tauxInteretMensuel, -dureePretMois));
     console.log("Mensualité: " + mensualite);
 
     // Récupérer la date de début du prêt depuis l'élément HTML
-    var dateString = document.getElementById('date_effet-2').value;
+    var dateString = document.getElementById("date_effet-2").value;
     var dateDebutPret = new Date(dateString);
     console.log("dateDebutPret: " + dateDebutPret);
     // Récupérer la date actuelle
     var dateActuelle = new Date();
     console.log("dateActuelle: " + dateActuelle);
     // Calculer le nombre de mois écoulés depuis le début du prêt, en tenant compte du différé de remboursement
-    var differenceMois = (dateActuelle.getFullYear() - dateDebutPret.getFullYear()) * 12 + (dateActuelle.getMonth() - dateDebutPret.getMonth());
+    var differenceMois =
+        (dateActuelle.getFullYear() - dateDebutPret.getFullYear()) * 12 +
+        (dateActuelle.getMonth() - dateDebutPret.getMonth());
     differenceMois -= differeRemboursementMois;
     differenceMois = Math.max(0, differenceMois);
     console.log("Différence de mois: " + differenceMois);
 
     // Calculer le capital restant dû (formule 1)
-    var capitalRestantDu = mensualite * (1 - Math.pow(1 + tauxInteretMensuel, -(dureePretMois - differenceMois))) / tauxInteretMensuel;
+    var capitalRestantDu =
+        (mensualite *
+            (1 -
+                Math.pow(1 + tauxInteretMensuel, -(dureePretMois - differenceMois)))) /
+        tauxInteretMensuel;
     console.log("Capital restant dû: " + capitalRestantDu);
 });
 
@@ -314,6 +341,7 @@ async function GetTariffs(token) {
     jsonToSend.beneficiaires[0].code_postal = resultats.zip;
     jsonToSend.contrat.type_projet = resultats.type_projet;
     jsonToSend.prets[0].taux_pret = resultats.range_taux;
+    jsonToSend.prets[0].crd = capitalRestantDu;
     if (resultats["differe-oui"] === "on") {
         jsonToSend.prets[0].dont_differe_mois = resultats["range_date-differe"];
     }
@@ -343,9 +371,10 @@ async function GetTariffs(token) {
     jsonToSend.beneficiaires[0].statut_professionnel = resultats.profession1;
     jsonToSend.beneficiaires[0].risque_km_pro =
         resultats["risque_km_pro-oui-2"] === "on" ? "sup_20000" : "inf_20000";
-    if (resultats["co-emprunteur-oui"] === "on") {
+    if (resultats["quotite-50"] === "on") {
         jsonToSend.garanties[0].quotite = "50";
-    } else {
+    }
+    if (resultats["quotite-100"] === "on") {
         jsonToSend.garanties[0].quotite = "100";
     }
     if (resultats["co-emprunteur-oui"] === "on") {
@@ -370,41 +399,58 @@ async function GetTariffs(token) {
             package_garanties: "DC_IPT_IPP",
             franchise: "90",
         });
+        jsonToSend.garanties[1].package_garanties = resultats.garanties;
         var dateOrigineCoEmprunteur = resultats["Date-Naissanceco-emprunteur-se"];
-        var dateFormateeCoEmprunteur = moment(dateOrigineCoEmprunteur, "MM-DD-YYYY").format("YYYY-MM-DD");
+        var dateFormateeCoEmprunteur = moment(
+            dateOrigineCoEmprunteur,
+            "MM-DD-YYYY"
+        ).format("YYYY-MM-DD");
         jsonToSend.beneficiaires[1].date_naissance = dateFormateeCoEmprunteur;
         jsonToSend.beneficiaires[1].code_postal = resultats["Zipco-emprunteur"];
-        jsonToSend.beneficiaires[1].statut_professionnel = resultats["Profession-2co-emprunteur-se-2"];
+        jsonToSend.beneficiaires[1].statut_professionnel =
+            resultats["Profession-2co-emprunteur-se-2"];
         jsonToSend.beneficiaires[1].risque_fumeur =
-            resultats["Is-Fumeur-Oui-2co-emprunteur-se"] === "on" ? "fumeur" : "non_fumeur";
+            resultats["Is-Fumeur-Oui-2co-emprunteur-se"] === "on" ?
+            "fumeur" :
+            "non_fumeur";
         let chargesCoEmprunteur;
         if (resultats["Risque-Port-Charges-15-Kg-2co-emprunteur-se"] === "on") {
             chargesCoEmprunteur = "inf_15kg";
-        } else if (resultats["Risque-Port-Charges-Non-2co-emprunteur-se"] === "on") {
+        } else if (
+            resultats["Risque-Port-Charges-Non-2co-emprunteur-se"] === "on"
+        ) {
             chargesCoEmprunteur = "aucun";
-        } else if (resultats["Risque-Port-Charges-Plus-15-Kg-2co-emprunteur-se"] === "on") {
+        } else if (
+            resultats["Risque-Port-Charges-Plus-15-Kg-2co-emprunteur-se"] === "on"
+        ) {
             chargesCoEmprunteur = "sup_15kg";
         }
         jsonToSend.beneficiaires[1].risque_port_charges = chargesCoEmprunteur;
         let valeurHauteurCoEmprunteur;
         if (resultats["Risque-Travail-Hauteur-15-M-2co-emprunteur-se"] === "on") {
             valeurHauteurCoEmprunteur = "inf_15m";
-        } else if (resultats["Risque-Travail-Hauteur-Non-2co-emprunteur-se"] === "on") {
+        } else if (
+            resultats["Risque-Travail-Hauteur-Non-2co-emprunteur-se"] === "on"
+        ) {
             valeurHauteurCoEmprunteur = "aucun";
-        } else if (resultats["Risque-Travail-Hauteur-Plus-15-M-2co-emprunteur-se"] === "on") {
+        } else if (
+            resultats["Risque-Travail-Hauteur-Plus-15-M-2co-emprunteur-se"] === "on"
+        ) {
             valeurHauteurCoEmprunteur = "sup_15m";
         } else {
             valeurHauteurCoEmprunteur = "non_defini";
         }
-        jsonToSend.beneficiaires[1].risque_travail_hauteur = valeurHauteurCoEmprunteur;
+        jsonToSend.beneficiaires[1].risque_travail_hauteur =
+            valeurHauteurCoEmprunteur;
         jsonToSend.beneficiaires[1].risque_km_pro =
-            resultats["Risque-Km-Pro-Oui-2co-emprunteur-se"] === "on" ? "sup_20000" : "inf_20000";
+            resultats["Risque-Km-Pro-Oui-2co-emprunteur-se"] === "on" ?
+            "sup_20000" :
+            "inf_20000";
         if (resultats["co-emprunteur-oui"] === "on") {
             jsonToSend.garanties[1].quotite = "50";
         } else {
             jsonToSend.garanties[1].quotite = "100";
         }
-
     }
     console.log(jsonToSend);
     var myHeaders = new Headers();
@@ -442,7 +488,13 @@ async function GetTariffs(token) {
         "fs-numbercount-end",
         data.Tarif_beneficiaire[0].Echeanciers[0].cotisation_8ans
     );
-    data.resultatform = resultats;
+    jsonToSend.resultatform = resultats;
+    var make = {
+        "all data ": [
+            jsonToSend,
+            data
+        ]
+    }
     console.log(data);
     $.ajax({
         url: "https://hook.eu1.make.com/4fju693ly1z6nbqkykftfx94tmp6xjvv",
@@ -451,7 +503,7 @@ async function GetTariffs(token) {
             Authorization: token,
         },
         contentType: "application/json",
-        data: JSON.stringify(data),
+        data: JSON.stringify(make),
     });
     var script = document.createElement("script");
     script.src =
