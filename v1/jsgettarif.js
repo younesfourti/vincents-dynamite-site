@@ -181,45 +181,48 @@ async function updateListWithAPIdata(token) {
     });
 }
 // Récupérer les valeurs des éléments HTML
-var montantPret = parseFloat(document.getElementById('montant-du-pret-2').value);
-var tauxInteret = parseFloat(document.getElementById('range_taux').value);
-var dureePretAnnees = parseFloat(document.getElementById('range_date-credit').value);
-var differeRemboursementMois = parseFloat(document.getElementById('range_date-differe').value) || 0; // Valeur par défaut de 0 si l'élément n'est pas rempli
+$("#go_calcule").click(function() {
 
-console.log("Montant du prêt: " + montantPret);
-console.log("Taux d'intérêt: " + tauxInteret);
-console.log("Durée du prêt en années: " + dureePretAnnees);
-console.log("Différé de remboursement en mois: " + differeRemboursementMois);
 
-// Convertir la durée du prêt en mois
-var dureePretMois = dureePretAnnees * 12;
-console.log("Durée du prêt en mois: " + dureePretMois);
+    var montantPret = parseFloat(document.getElementById('montant-du-pret-2').value);
+    var tauxInteret = parseFloat(document.getElementById('range_taux').value);
+    var dureePretAnnees = parseFloat(document.getElementById('range_date-credit').value);
+    var differeRemboursementMois = parseFloat(document.getElementById('range_date-differe').value) || 0; // Valeur par défaut de 0 si l'élément n'est pas rempli
 
-// Convertir le taux d'intérêt annuel en taux mensuel (en décimale)
-var tauxInteretMensuel = tauxInteret / 100 / 12;
-console.log("Taux d'intérêt mensuel (en décimale): " + tauxInteretMensuel);
+    console.log("Montant du prêt: " + montantPret);
+    console.log("Taux d'intérêt: " + tauxInteret);
+    console.log("Durée du prêt en années: " + dureePretAnnees);
+    console.log("Différé de remboursement en mois: " + differeRemboursementMois);
 
-// Calculer la mensualité (formule 2)
-var mensualite = (montantPret * tauxInteretMensuel) / (1 - Math.pow(1 + tauxInteretMensuel, -dureePretMois));
-console.log("Mensualité: " + mensualite);
+    // Convertir la durée du prêt en mois
+    var dureePretMois = dureePretAnnees * 12;
+    console.log("Durée du prêt en mois: " + dureePretMois);
 
-// Récupérer la date de début du prêt depuis l'élément HTML
-var dateString = document.getElementById('date_effet-2').value;
-var dateDebutPret = new Date(dateString);
-console.log("dateDebutPret: " + dateDebutPret);
-// Récupérer la date actuelle
-var dateActuelle = new Date();
-console.log("dateActuelle: " + dateActuelle);
-// Calculer le nombre de mois écoulés depuis le début du prêt, en tenant compte du différé de remboursement
-var differenceMois = (dateActuelle.getFullYear() - dateDebutPret.getFullYear()) * 12 + (dateActuelle.getMonth() - dateDebutPret.getMonth());
-differenceMois -= differeRemboursementMois;
-differenceMois = Math.max(0, differenceMois);
-console.log("Différence de mois: " + differenceMois);
+    // Convertir le taux d'intérêt annuel en taux mensuel (en décimale)
+    var tauxInteretMensuel = tauxInteret / 100 / 12;
+    console.log("Taux d'intérêt mensuel (en décimale): " + tauxInteretMensuel);
 
-// Calculer le capital restant dû (formule 1)
-var capitalRestantDu = mensualite * (1 - Math.pow(1 + tauxInteretMensuel, -(dureePretMois - differenceMois))) / tauxInteretMensuel;
-console.log("Capital restant dû: " + capitalRestantDu);
+    // Calculer la mensualité (formule 2)
+    var mensualite = (montantPret * tauxInteretMensuel) / (1 - Math.pow(1 + tauxInteretMensuel, -dureePretMois));
+    console.log("Mensualité: " + mensualite);
 
+    // Récupérer la date de début du prêt depuis l'élément HTML
+    var dateString = document.getElementById('date_effet-2').value;
+    var dateDebutPret = new Date(dateString);
+    console.log("dateDebutPret: " + dateDebutPret);
+    // Récupérer la date actuelle
+    var dateActuelle = new Date();
+    console.log("dateActuelle: " + dateActuelle);
+    // Calculer le nombre de mois écoulés depuis le début du prêt, en tenant compte du différé de remboursement
+    var differenceMois = (dateActuelle.getFullYear() - dateDebutPret.getFullYear()) * 12 + (dateActuelle.getMonth() - dateDebutPret.getMonth());
+    differenceMois -= differeRemboursementMois;
+    differenceMois = Math.max(0, differenceMois);
+    console.log("Différence de mois: " + differenceMois);
+
+    // Calculer le capital restant dû (formule 1)
+    var capitalRestantDu = mensualite * (1 - Math.pow(1 + tauxInteretMensuel, -(dureePretMois - differenceMois))) / tauxInteretMensuel;
+    console.log("Capital restant dû: " + capitalRestantDu);
+});
 
 $("#triggerTarifs").click(function() {
     GetToken();
