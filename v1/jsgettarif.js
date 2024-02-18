@@ -249,6 +249,7 @@ $("#go_calcule").click(function() {
                 Math.pow(1 + tauxInteretMensuel, -(dureePretMois - differenceMois)))) /
         tauxInteretMensuel;
     console.log("Capital restant dû: " + capitalRestantDu);
+    $("#capitalRestantDu").text(capitalRestantDu.toFixed(2));
     return capitalRestantDu;
 });
 
