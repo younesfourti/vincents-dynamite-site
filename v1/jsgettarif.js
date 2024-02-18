@@ -343,7 +343,7 @@ async function GetTariffs(token) {
     jsonToSend.beneficiaires[0].code_postal = resultats.zip;
     jsonToSend.contrat.type_projet = resultats.type_projet;
     jsonToSend.prets[0].taux_pret = resultats.range_taux;
-    jsonToSend.prets[0].crd = capitalRestantDu;
+    jsonToSend.prets[0].crd = resultats.capitalRestantDu;
     if (resultats["differe-oui"] === "on") {
         jsonToSend.prets[0].dont_differe_mois = resultats["range_date-differe"];
     }
