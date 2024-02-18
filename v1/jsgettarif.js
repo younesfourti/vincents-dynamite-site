@@ -370,7 +370,7 @@ async function GetTariffs(token) {
         var dateOrigineCoEmprunteur = resultats["Date-Naissanceco-emprunteur-se"];
         var dateFormateeCoEmprunteur = moment(dateOrigineCoEmprunteur, "MM-DD-YYYY").format("YYYY-MM-DD");
         jsonToSend.beneficiaires[1].date_naissance = dateFormateeCoEmprunteur;
-        jsonToSend.beneficiaires[1].code_postal = resultats.Zipco - emprunteur;
+        jsonToSend.beneficiaires[1].code_postal = resultats["Zipco-emprunteur"];
         jsonToSend.beneficiaires[1].statut_professionnel = resultats["Profession-2co-emprunteur-se-2"];
         jsonToSend.beneficiaires[1].risque_fumeur =
             resultats["Is-Fumeur-Oui-2co-emprunteur-se"] === "on" ? "fumeur" : "non_fumeur";
