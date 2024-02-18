@@ -197,7 +197,7 @@ async function updateListWithAPIdata(token) {
     });
 }
 // Récupérer les valeurs des éléments HTML
-$("#go_calcule").click(function() {
+$("#go_calcule, #differe-next").click(function() {
     var montantPret = parseFloat(
         document.getElementById("montant-du-pret-2").value
     );
@@ -473,7 +473,7 @@ async function GetTariffs(token) {
             data
         ]
     }
-    console.log(data);
+    console.log(make);
     $.ajax({
         url: "https://hook.eu1.make.com/4fju693ly1z6nbqkykftfx94tmp6xjvv",
         method: "POST",
