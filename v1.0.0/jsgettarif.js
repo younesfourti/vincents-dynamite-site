@@ -324,7 +324,7 @@ async function GetTariffs(token) {
         }, ],
         prets: [{
             rang_pret: "1",
-            crd: "243500.55",
+            crd: parseFloat($("#capitalRestantDu-2").val()),
             type_pret: "amortissable",
             taux_pret: "1.5",
             duree_remboursement_mois: "185",
@@ -469,10 +469,10 @@ async function GetTariffs(token) {
     });
     // Calcul initial de la cotisation mensuelle
     var Cotisation_mensuelle = data.Tarif_beneficiaire[0].Echeanciers[0].cotisation_annuelle / 12;
-
+    console.log(Cotisation_mensuelle);
     // Récupération de la valeur actuelle de l'assurance depuis l'input et conversion en nombre
     var Montant_actuel_assurance = parseFloat($("#montant-actuel-de-votre-assurance-2").val());
-
+    console.log(Montant_actuel_assurance);
     // Vérification que Montant_actuel_assurance est un nombre, sinon le définir à 0 pour éviter les NaN dans les calculs
     if (isNaN(Montant_actuel_assurance)) {
         Montant_actuel_assurance = 0;
@@ -480,9 +480,13 @@ async function GetTariffs(token) {
 
     // Calcul des frais de courtage
     var frais_courtage = (Montant_actuel_assurance - Cotisation_mensuelle) / 2;
-
+    console.log(frais_courtage);
     // Calcul de la cotisation mensuelle ajustée
     var Cotisation_mensuelle_ajustée = Cotisation_mensuelle + frais_courtage;
+    $("#cotisation-ANNEE-1-Mensualit").attr("fs-numbercount-end", Cotisation_mensuelle_ajustée.toFixed(2));
+    console.log(Cotisation_mensuelle_ajustée);
+    // Mise à jour de l'attribut fs-numbercount-end pour l'année 2 avec la cotisation annuelle divisée par 12
+    $("#cotisation-ANNEE-2-Mensualit").attr("fs-numbercount-end", (data.Tarif_beneficiaire[0].Echeanciers[1].cotisation_annuelle / 12).toFixed(2));
     jsonToSend.resultatform = resultats;
     var make = {
         "all data ": [
@@ -506,10 +510,7 @@ async function GetTariffs(token) {
 
 
     // Mise à jour de l'attribut fs-numbercount-end pour l'année 1 avec la cotisation mensuelle ajustée
-    $("#cotisation-ANNEE-1-Mensualit").attr("fs-numbercount-end", Cotisation_mensuelle_ajustée.toFixed(2));
 
-    // Mise à jour de l'attribut fs-numbercount-end pour l'année 2 avec la cotisation annuelle divisée par 12
-    $("#cotisation-ANNEE-2-Mensualit").attr("fs-numbercount-end", (data.Tarif_beneficiaire[0].Echeanciers[1].cotisation_annuelle / 12).toFixed(2));
 
 
     var script = document.createElement("script");
