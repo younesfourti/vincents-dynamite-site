@@ -149,8 +149,8 @@ $("#range_date-differe").ionRangeSlider({
     grid: !0,
     min: 0,
     max: 24,
-    from_min: 1,
-    from: 1,
+    from_min: 0,
+    from: 0,
     postfix: "mois",
     hide_min_max: !0,
     force_edges: !0,
@@ -249,7 +249,7 @@ $("#go_calcule, #differe-next").click(function() {
                 Math.pow(1 + tauxInteretMensuel, -(dureePretMois - differenceMois)))) /
         tauxInteretMensuel;
     console.log("Capital restant dû: " + capitalRestantDu);
-    $("#capitalRestantDu").val(capitalRestantDu.toFixed(2));
+    $("#capitalRestantDu-2").val(capitalRestantDu.toFixed(2));
     return capitalRestantDu;
 });
 
@@ -320,7 +320,7 @@ async function GetTariffs(token) {
             risque_fumeur: "non_fumeur",
             risque_ppe: "aucun",
             encours_inf_200000: "sup_200000",
-            frais_courtage: "250",
+            frais_courtage: "0",
         }, ],
         prets: [{
             rang_pret: "1",
@@ -455,6 +455,22 @@ async function GetTariffs(token) {
         }
     }
     console.log(jsonToSend);
+    // Calcul initial de la cotisation mensuelle
+    var Cotisation_mensuelle = data.Tarif_beneficiaire[0].Echeanciers[0].cotisation_annuelle / 12;
+
+    // Récupération de la valeur actuelle de l'assurance depuis l'input et conversion en nombre
+    var Montant_actuel_assurance = parseFloat($("#montant-actuel-de-votre-assurance-2").val());
+
+    // Vérification que Montant_actuel_assurance est un nombre, sinon le définir à 0 pour éviter les NaN dans les calculs
+    if (isNaN(Montant_actuel_assurance)) {
+        Montant_actuel_assurance = 0;
+    }
+
+    // Calcul des frais de courtage
+    var frais_courtage = (Montant_actuel_assurance - Cotisation_mensuelle) / 2;
+
+    // Calcul de la cotisation mensuelle ajustée
+    var Cotisation_mensuelle_ajustée = Cotisation_mensuelle + frais_courtage;
     var myHeaders = new Headers();
     myHeaders.append("Authorization", `${token}`);
     const data = await $.ajax({
@@ -471,7 +487,10 @@ async function GetTariffs(token) {
         "all data ": [
             jsonToSend,
             data
-        ]
+
+        ],
+        "frais_courtage ": frais_courtage,
+        "Cotisation_mensuelle_ajustée annee 1 ": Cotisation_mensuelle_ajustée
     }
     console.log(make);
     $.ajax({
@@ -483,30 +502,14 @@ async function GetTariffs(token) {
         contentType: "application/json",
         data: JSON.stringify(make),
     });
-    $("#cotisation_echeance_moyenne").attr(
-        "fs-numbercount-end",
-        data.Tarif_global.cotisation_echeance_moyenne
-    );
-    $("#cotisation_echeance").attr(
-        "fs-numbercount-end",
-        data.Tarif_global.cotisation_echeance
-    );
-    $("#cotisation_totale").attr(
-        "fs-numbercount-end",
-        data.Tarif_pret[0].cotisation_totale
-    );
-    $("#cotisation_annuelle_moyenne").attr(
-        "fs-numbercount-end",
-        data.Tarif_pret[0].cotisation_annuelle_moyenne
-    );
-    $("#taux_moyen").attr(
-        "fs-numbercount-end",
-        data.Tarif_beneficiaire[0].Echeanciers[0].taux_moyen
-    );
-    $("#cotisation_8ans").attr(
-        "fs-numbercount-end",
-        data.Tarif_beneficiaire[0].Echeanciers[0].cotisation_8ans
-    );
+
+
+    // Mise à jour de l'attribut fs-numbercount-end pour l'année 1 avec la cotisation mensuelle ajustée
+    $("#cotisation-ANNEE-1-Mensualit").attr("fs-numbercount-end", Cotisation_mensuelle_ajustée.toFixed(2));
+
+    // Mise à jour de l'attribut fs-numbercount-end pour l'année 2 avec la cotisation annuelle divisée par 12
+    $("#cotisation-ANNEE-2-Mensualit").attr("fs-numbercount-end", (data.Tarif_beneficiaire[0].Echeanciers[1].cotisation_annuelle / 12).toFixed(2));
+
 
     var script = document.createElement("script");
     script.src =
