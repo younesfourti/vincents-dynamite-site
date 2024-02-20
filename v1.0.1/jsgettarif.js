@@ -468,7 +468,7 @@ async function GetTariffs(token) {
         data: JSON.stringify(jsonToSend),
     });
     // Calcul initial de la cotisation mensuelle
-    var Cotisation_mensuelle = data.Tarif_beneficiaire[0].Echeanciers[0].cotisation_annuelle / 12;
+    var Cotisation_mensuelle = data.Tarif_beneficiaire[0].Echeanciers[0].Echeances[0].cotisation_annuelle / 12;
     console.log(Cotisation_mensuelle);
     // Récupération de la valeur actuelle de l'assurance depuis l'input et conversion en nombre
     var Montant_actuel_assurance = resultats["montant-actuel-de-votre-assurance-2"];
@@ -486,7 +486,11 @@ async function GetTariffs(token) {
     $("#cotisation-ANNEE-1-Mensualit").attr("fs-numbercount-end", Cotisation_mensuelle_ajustée.toFixed(2));
     console.log(Cotisation_mensuelle_ajustée);
     // Mise à jour de l'attribut fs-numbercount-end pour l'année 2 avec la cotisation annuelle divisée par 12
-    $("#cotisation-ANNEE-2-Mensualit").attr("fs-numbercount-end", (data.Tarif_beneficiaire[0].Echeanciers[1].cotisation_annuelle / 12).toFixed(2));
+    $("#cotisation-ANNEE-2-Mensualit").attr("fs-numbercount-end", (data.Tarif_beneficiaire[0].Echeanciers[0].Echeances[1].cotisation_annuelle / 12).toFixed(2));
+
+
+
+
     jsonToSend.resultatform = resultats;
     var make = {
         "all data ": [
