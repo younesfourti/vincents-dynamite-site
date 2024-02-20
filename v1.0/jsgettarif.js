@@ -455,6 +455,18 @@ async function GetTariffs(token) {
         }
     }
     console.log(jsonToSend);
+
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `${token}`);
+    const data = await $.ajax({
+        url: "https://demosoizic.zenioo.com/Mortgage/rest/v1/GetTariffs",
+        method: "POST",
+        headers: {
+            Authorization: token,
+        },
+        contentType: "application/json",
+        data: JSON.stringify(jsonToSend),
+    });
     // Calcul initial de la cotisation mensuelle
     var Cotisation_mensuelle = data.Tarif_beneficiaire[0].Echeanciers[0].cotisation_annuelle / 12;
 
@@ -471,17 +483,6 @@ async function GetTariffs(token) {
 
     // Calcul de la cotisation mensuelle ajustée
     var Cotisation_mensuelle_ajustée = Cotisation_mensuelle + frais_courtage;
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", `${token}`);
-    const data = await $.ajax({
-        url: "https://demosoizic.zenioo.com/Mortgage/rest/v1/GetTariffs",
-        method: "POST",
-        headers: {
-            Authorization: token,
-        },
-        contentType: "application/json",
-        data: JSON.stringify(jsonToSend),
-    });
     jsonToSend.resultatform = resultats;
     var make = {
         "all data ": [
