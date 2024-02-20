@@ -324,7 +324,7 @@ async function GetTariffs(token) {
         }, ],
         prets: [{
             rang_pret: "1",
-            crd: parseFloat($("#capitalRestantDu-2").val()),
+            crd: "",
             type_pret: "amortissable",
             taux_pret: "1.5",
             duree_remboursement_mois: "185",
@@ -343,7 +343,7 @@ async function GetTariffs(token) {
     jsonToSend.beneficiaires[0].code_postal = resultats.zip;
     jsonToSend.contrat.type_projet = resultats.type_projet;
     jsonToSend.prets[0].taux_pret = resultats.range_taux;
-    jsonToSend.prets[0].crd = parseFloat($("#capitalRestantDu-2").val());
+    jsonToSend.prets[0].crd = resultats["capitalRestantDu-2"];
     if (resultats["differe-oui"] === "on") {
         jsonToSend.prets[0].dont_differe_mois = resultats["range_date-differe"];
     }
@@ -471,7 +471,7 @@ async function GetTariffs(token) {
     var Cotisation_mensuelle = data.Tarif_beneficiaire[0].Echeanciers[0].cotisation_annuelle / 12;
     console.log(Cotisation_mensuelle);
     // Récupération de la valeur actuelle de l'assurance depuis l'input et conversion en nombre
-    var Montant_actuel_assurance = parseFloat($("#montant-actuel-de-votre-assurance-2").val());
+    var Montant_actuel_assurance = resultats["montant-actuel-de-votre-assurance-2"];
     console.log(Montant_actuel_assurance);
     // Vérification que Montant_actuel_assurance est un nombre, sinon le définir à 0 pour éviter les NaN dans les calculs
     if (isNaN(Montant_actuel_assurance)) {
