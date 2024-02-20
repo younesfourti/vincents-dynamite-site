@@ -196,51 +196,37 @@ async function updateListWithAPIdata(token) {
         $banqueSelect.append($option);
     });
 }
-// Récupérer les valeurs des éléments HTML
-$("#go_calcule, #differe-next").click(function() {
-    var montantPret = parseFloat(
-        document.getElementById("montant-du-pret-2").value
-    );
-    var tauxInteret = parseFloat(document.getElementById("range_taux").value);
-    var dureePretAnnees = parseFloat(
-        document.getElementById("range_date-credit").value
-    );
-    var differeRemboursementMois =
-        parseFloat(document.getElementById("range_date-differe").value) || 0; // Valeur par défaut de 0 si l'élément n'est pas rempli
 
-    console.log("Montant du prêt: " + montantPret);
-    console.log("Taux d'intérêt: " + tauxInteret);
-    console.log("Durée du prêt en années: " + dureePretAnnees);
-    console.log("Différé de remboursement en mois: " + differeRemboursementMois);
-
+function calculerMensualite(
+    montantPret,
+    tauxInteret,
+    dureePretAnnees,
+    differeRemboursementMois,
+    dateString
+) {
     // Convertir la durée du prêt en mois
     var dureePretMois = dureePretAnnees * 12;
-    console.log("Durée du prêt en mois: " + dureePretMois);
 
     // Convertir le taux d'intérêt annuel en taux mensuel (en décimale)
     var tauxInteretMensuel = tauxInteret / 100 / 12;
-    console.log("Taux d'intérêt mensuel (en décimale): " + tauxInteretMensuel);
 
     // Calculer la mensualité (formule 2)
     var mensualite =
         (montantPret * tauxInteretMensuel) /
         (1 - Math.pow(1 + tauxInteretMensuel, -dureePretMois));
-    console.log("Mensualité: " + mensualite);
 
-    // Récupérer la date de début du prêt depuis l'élément HTML
-    var dateString = document.getElementById("date_effet-2").value;
+    // Récupérer la date de début du prêt depuis le paramètre dateString
     var dateDebutPret = new Date(dateString);
-    console.log("dateDebutPret: " + dateDebutPret);
+
     // Récupérer la date actuelle
     var dateActuelle = new Date();
-    console.log("dateActuelle: " + dateActuelle);
+
     // Calculer le nombre de mois écoulés depuis le début du prêt, en tenant compte du différé de remboursement
     var differenceMois =
         (dateActuelle.getFullYear() - dateDebutPret.getFullYear()) * 12 +
         (dateActuelle.getMonth() - dateDebutPret.getMonth());
     differenceMois -= differeRemboursementMois;
     differenceMois = Math.max(0, differenceMois);
-    console.log("Différence de mois: " + differenceMois);
 
     // Calculer le capital restant dû (formule 1)
     var capitalRestantDu =
@@ -250,7 +236,21 @@ $("#go_calcule, #differe-next").click(function() {
         tauxInteretMensuel;
     console.log("Capital restant dû: " + capitalRestantDu);
     $("#capitalRestantDu-2").val(capitalRestantDu.toFixed(2));
-    return capitalRestantDu;
+
+    // Retourner la mensualité calculée
+    return mensualite.toFixed(2);
+}
+// Récupérer les valeurs des éléments HTML
+$("#go_calcule, #differe-next , triggerTarifs").click(function() {
+    var mensualite = calculerMensualite(
+        parseFloat(document.getElementById("montant-du-pret-2").value),
+        parseFloat(document.getElementById("range_taux").value),
+        parseFloat(document.getElementById("range_date-credit").value),
+        parseFloat(document.getElementById("range_date-differe").value) || 0,
+        document.getElementById("date_effet-2").value
+    );
+
+    console.log("Mensualité calculée: " + mensualite);
 });
 
 $("#triggerTarifs").click(function() {
@@ -393,7 +393,7 @@ async function GetTariffs(token) {
             risque_fumeur: "non_fumeur",
             risque_ppe: "aucun",
             encours_inf_200000: "sup_200000",
-            frais_courtage: "250",
+            frais_courtage: "0",
         });
         jsonToSend.garanties.push({
             rang_beneficiaire: "2",
@@ -467,11 +467,24 @@ async function GetTariffs(token) {
         contentType: "application/json",
         data: JSON.stringify(jsonToSend),
     });
+    var mensualite = calculerMensualite(
+        parseFloat(document.getElementById("montant-du-pret-2").value),
+        parseFloat(document.getElementById("range_taux").value),
+        parseFloat(document.getElementById("range_date-credit").value),
+        parseFloat(document.getElementById("range_date-differe").value) || 0,
+        document.getElementById("date_effet-2").value
+    );
+
+    console.log("Mensualité calculée final : " + mensualite);
+
     // Calcul initial de la cotisation mensuelle
-    var Cotisation_mensuelle = data.Tarif_beneficiaire[0].Echeanciers[0].Echeances[0].cotisation_annuelle / 12;
+    var Cotisation_mensuelle =
+        data.Tarif_beneficiaire[0].Echeanciers[0].Echeances[0].cotisation_annuelle /
+        12;
     console.log(Cotisation_mensuelle);
     // Récupération de la valeur actuelle de l'assurance depuis l'input et conversion en nombre
-    var Montant_actuel_assurance = resultats["montant-actuel-de-votre-assurance-2"];
+    var Montant_actuel_assurance =
+        resultats["montant-actuel-de-votre-assurance-2"] - mensualite;
     console.log(Montant_actuel_assurance);
     // Vérification que Montant_actuel_assurance est un nombre, sinon le définir à 0 pour éviter les NaN dans les calculs
     if (isNaN(Montant_actuel_assurance)) {
@@ -483,24 +496,26 @@ async function GetTariffs(token) {
     console.log(frais_courtage);
     // Calcul de la cotisation mensuelle ajustée
     var Cotisation_mensuelle_ajustée = Cotisation_mensuelle + frais_courtage;
-    $("#cotisation-ANNEE-1-Mensualit").attr("fs-numbercount-end", Cotisation_mensuelle_ajustée.toFixed(2));
+    $("#cotisation-ANNEE-1-Mensualit").attr(
+        "fs-numbercount-end",
+        Cotisation_mensuelle_ajustée.toFixed(2)
+    );
     console.log(Cotisation_mensuelle_ajustée);
     // Mise à jour de l'attribut fs-numbercount-end pour l'année 2 avec la cotisation annuelle divisée par 12
-    $("#cotisation-ANNEE-2-Mensualit").attr("fs-numbercount-end", (data.Tarif_beneficiaire[0].Echeanciers[0].Echeances[1].cotisation_annuelle / 12).toFixed(2));
-
-
-
+    $("#cotisation-ANNEE-2-Mensualit").attr(
+        "fs-numbercount-end",
+        (
+            data.Tarif_beneficiaire[0].Echeanciers[0].Echeances[1]
+            .cotisation_annuelle / 12
+        ).toFixed(2)
+    );
 
     jsonToSend.resultatform = resultats;
     var make = {
-        "all data ": [
-            jsonToSend,
-            data
-
-        ],
+        "all data ": [jsonToSend, data],
         "frais_courtage ": frais_courtage,
-        "Cotisation_mensuelle_ajustée annee 1 ": Cotisation_mensuelle_ajustée
-    }
+        "Cotisation_mensuelle_ajustée annee 1 ": Cotisation_mensuelle_ajustée,
+    };
     console.log(make);
     $.ajax({
         url: "https://hook.eu1.make.com/4fju693ly1z6nbqkykftfx94tmp6xjvv",
@@ -512,10 +527,7 @@ async function GetTariffs(token) {
         data: JSON.stringify(make),
     });
 
-
     // Mise à jour de l'attribut fs-numbercount-end pour l'année 1 avec la cotisation mensuelle ajustée
-
-
 
     var script = document.createElement("script");
     script.src =
