@@ -251,7 +251,7 @@ $("#go_calcule, #differe-next , triggerTarifs").click(function() {
         document.getElementById("date_effet-2").value
     );
 
-    $('#mensualit-sans-assurance').text("nous vous affichons le montant de la mensualité sans assurance de " + mensualite + "€, vous pouvez l utiliser comme base ?");
+    $('#mensualit-sans-assurance').text("Nous vous affichons le montant de la mensualité sans assurance de " + mensualite + "€, (vous pouvez l utiliser comme base)");
     console.log("Mensualité calculée: " + mensualite);
 });
 
@@ -338,7 +338,7 @@ async function GetTariffs(token) {
         garanties: [{
             rang_beneficiaire: "1",
             quotite: "80",
-            package_garanties: "DC_IPT_IPP",
+            package_garanties: "DC-IPT-MNO",
             franchise: "90",
         }, ],
     };
@@ -352,7 +352,7 @@ async function GetTariffs(token) {
     if (resultats["differe-oui"] === "on") {
         jsonToSend.prets[0].dont_differe_mois = resultats["range_date-differe"];
     }
-    jsonToSend.garanties[0].package_garanties = resultats.garanties;
+
     jsonToSend.beneficiaires[0].risque_fumeur =
         resultats["Is-Fumeur-Oui"] === "on" ? "fumeur" : "non_fumeur";
     let charges;
@@ -403,10 +403,9 @@ async function GetTariffs(token) {
         jsonToSend.garanties.push({
             rang_beneficiaire: "2",
             quotite: "80",
-            package_garanties: "DC_IPT_IPP",
+            package_garanties: "DC-IPT-MNO",
             franchise: "90",
         });
-        jsonToSend.garanties[1].package_garanties = resultats.garanties;
         var dateOrigineCoEmprunteur = resultats["Date-Naissanceco-emprunteur-se"];
         var dateFormateeCoEmprunteur = moment(
             dateOrigineCoEmprunteur,
