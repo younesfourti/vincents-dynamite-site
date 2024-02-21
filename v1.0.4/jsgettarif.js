@@ -236,6 +236,7 @@ function calculerMensualite(
         tauxInteretMensuel;
     console.log("Capital restant dû: " + capitalRestantDu);
     $("#capitalRestantDu-2").val(capitalRestantDu.toFixed(2));
+    $('#capitalRestantDu-2').prop('disabled', true);
 
     // Retourner la mensualité calculée
     return mensualite.toFixed(2);
@@ -250,8 +251,12 @@ $("#go_calcule, #differe-next , triggerTarifs").click(function() {
         document.getElementById("date_effet-2").value
     );
 
+    $('#mensualit-sans-assurance').text("nous vous affichons le montant de la mensualité sans assurance de " + mensualite_sans_assurance + "€, vous pouvez l utiliser comme base ?");
     console.log("Mensualité calculée: " + mensualite);
 });
+
+
+
 
 $("#triggerTarifs").click(function() {
     GetToken();
@@ -492,29 +497,57 @@ async function GetTariffs(token) {
     }
 
     // Calcul des frais de courtage
-    var frais_courtage = (Montant_actuel_assurance - Cotisation_mensuelle) / 2;
+    var frais_courtage;
+
+    if (Montant_actuel_assurance - Cotisation_mensuelle < 50) {
+        frais_courtage = Montant_actuel_assurance - Cotisation_mensuelle;
+    } else {
+        frais_courtage = (Montant_actuel_assurance - Cotisation_mensuelle) / 2;
+    }
     console.log(frais_courtage);
     // Calcul de la cotisation mensuelle ajustée
     var Cotisation_mensuelle_ajustée = Cotisation_mensuelle + frais_courtage;
-    $("#cotisation-ANNEE-1-Mensualit").attr(
+    $("#la-1er-annee").attr(
         "fs-numbercount-end",
         Cotisation_mensuelle_ajustée.toFixed(2)
     );
     console.log(Cotisation_mensuelle_ajustée);
     // Mise à jour de l'attribut fs-numbercount-end pour l'année 2 avec la cotisation annuelle divisée par 12
-    $("#cotisation-ANNEE-2-Mensualit").attr(
+    $("#la-2eme-annee").attr(
         "fs-numbercount-end",
         (
             data.Tarif_beneficiaire[0].Echeanciers[0].Echeances[1]
             .cotisation_annuelle / 12
         ).toFixed(2)
     );
+    $("#Economie-globale").attr(
+        "fs-numbercount-end",
+        (
+            data.Tarif_beneficiaire[0].cotisation_totale - (Cotisation_mensuelle * 12)
+        ).toFixed(2)
+    );
+    $("#Economie-par-mois").attr(
+        "fs-numbercount-end",
+        (
+            Montant_actuel_assurance - Cotisation_mensuelle
+        ).toFixed(2)
+    );
 
     jsonToSend.resultatform = resultats;
     var make = {
         "all data ": [jsonToSend, data],
-        "frais_courtage ": frais_courtage,
+        "frais_courtage": frais_courtage,
         "Cotisation_mensuelle_ajustée annee 1 ": Cotisation_mensuelle_ajustée,
+        "Economie-par-mois": (
+            Montant_actuel_assurance - Cotisation_mensuelle
+        ).toFixed(2),
+        "Economie-globale": (
+            data.Tarif_beneficiaire[0].cotisation_totale - (Cotisation_mensuelle * 12)
+        ).toFixed(2),
+        "la-2eme-annee": (
+            data.Tarif_beneficiaire[0].Echeanciers[0].Echeances[1]
+            .cotisation_annuelle / 12
+        ).toFixed(2)
     };
     console.log(make);
     $.ajax({
@@ -526,8 +559,6 @@ async function GetTariffs(token) {
         contentType: "application/json",
         data: JSON.stringify(make),
     });
-
-    // Mise à jour de l'attribut fs-numbercount-end pour l'année 1 avec la cotisation mensuelle ajustée
 
     var script = document.createElement("script");
     script.src =
