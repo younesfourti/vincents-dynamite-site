@@ -251,7 +251,7 @@ $("#go_calcule, #differe-next , triggerTarifs").click(function() {
         document.getElementById("date_effet-2").value
     );
 
-    $('#mensualit-sans-assurance').text("nous vous affichons le montant de la mensualité sans assurance de " + mensualite_sans_assurance + "€, vous pouvez l utiliser comme base ?");
+    $('#mensualit-sans-assurance').text("nous vous affichons le montant de la mensualité sans assurance de " + mensualite + "€, vous pouvez l utiliser comme base ?");
     console.log("Mensualité calculée: " + mensualite);
 });
 
