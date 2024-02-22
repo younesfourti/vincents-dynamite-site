@@ -531,7 +531,7 @@ async function GetTariffs(token) {
     $("#Economie-globale").attr(
         "fs-numbercount-end",
         parseFloat(
-            data.Tarif_beneficiaire[0].cotisation_totale - ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12)
+            ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12) - data.Tarif_beneficiaire[0].cotisation_totale
         ).toFixed(2)
     );
     $("#Economie-par-mois").attr(
