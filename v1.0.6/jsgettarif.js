@@ -197,6 +197,25 @@ async function updateListWithAPIdata(token) {
     });
 }
 
+function differenceMois(
+    differeRemboursementMois,
+    dateString
+) {
+    // Récupérer la date de début du prêt depuis le paramètre dateString
+    var dateDebutPret = new Date(dateString);
+
+    // Récupérer la date actuelle
+    var dateActuelle = new Date();
+
+    // Calculer le nombre de mois écoulés depuis le début du prêt, en tenant compte du différé de remboursement
+    var differenceMois =
+        (dateActuelle.getFullYear() - dateDebutPret.getFullYear()) * 12 +
+        (dateActuelle.getMonth() - dateDebutPret.getMonth());
+    differenceMois -= differeRemboursementMois;
+    differenceMois = Math.max(0, differenceMois);
+    return differenceMois.toFixed(2);
+}
+
 function calculerMensualite(
     montantPret,
     tauxInteret,
@@ -478,13 +497,16 @@ async function GetTariffs(token) {
         parseFloat(document.getElementById("range_date-differe").value) || 0,
         document.getElementById("date_effet-2").value
     );
-
+    var differenceMois = differenceMois(
+        parseFloat(document.getElementById("range_date-credit").value),
+        parseFloat(document.getElementById("range_date-differe").value) || 0,
+        document.getElementById("date_effet-2").value
+    );
     console.log("Mensualité calculée final : " + mensualite);
 
     // Calcul initial de la cotisation mensuelle
     var Cotisation_mensuelle =
-        data.Tarif_beneficiaire[0].Echeanciers[0].Echeances[0].cotisation_annuelle /
-        12;
+        data.Tarif_beneficiaire[0].cotisation_echeance_moyenne;
     console.log(Cotisation_mensuelle);
     // Récupération de la valeur actuelle de l'assurance depuis l'input et conversion en nombre
     var Montant_actuel_assurance =
@@ -506,23 +528,18 @@ async function GetTariffs(token) {
     console.log(frais_courtage);
     // Calcul de la cotisation mensuelle ajustée
     var Cotisation_mensuelle_ajustée = Cotisation_mensuelle + frais_courtage;
-    $("#la-1er-annee").attr(
-        "fs-numbercount-end",
-        Cotisation_mensuelle_ajustée.toFixed(2)
+    $("#total-de-l-assurance").attr(
+        "fs-numbercount-end", (data.Tarif_beneficiaire[0].cotisation_totale).toFixed(2)
     );
     console.log(Cotisation_mensuelle_ajustée);
     // Mise à jour de l'attribut fs-numbercount-end pour l'année 2 avec la cotisation annuelle divisée par 12
-    $("#la-2eme-annee").attr(
+    $("#Economie-mensuelle").attr(
         "fs-numbercount-end",
-        (
-            data.Tarif_beneficiaire[0].Echeanciers[0].Echeances[1]
-            .cotisation_annuelle / 12
-        ).toFixed(2)
-    );
+        (Montant_actuel_assurance - Cotisation_mensuelle).toFixed(2));
     $("#Economie-globale").attr(
         "fs-numbercount-end",
         (
-            data.Tarif_beneficiaire[0].cotisation_totale - (Cotisation_mensuelle * 12)
+            data.Tarif_beneficiaire[0].cotisation_totale - ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12)
         ).toFixed(2)
     );
     $("#Economie-par-mois").attr(
@@ -537,16 +554,10 @@ async function GetTariffs(token) {
         "all data ": [jsonToSend, data],
         "frais_courtage": frais_courtage,
         "Cotisation_mensuelle_ajustée annee 1 ": Cotisation_mensuelle_ajustée,
-        "Economie-par-mois": (
-            Montant_actuel_assurance - Cotisation_mensuelle
-        ).toFixed(2),
-        "Economie-globale": (
-            data.Tarif_beneficiaire[0].cotisation_totale - (Cotisation_mensuelle * 12)
-        ).toFixed(2),
-        "la-2eme-annee": (
-            data.Tarif_beneficiaire[0].Echeanciers[0].Echeances[1]
-            .cotisation_annuelle / 12
-        ).toFixed(2)
+        "mensuelle-moyenne": (Cotisation_mensuelle).toFixed(2),
+        "Economie-globale": (data.Tarif_beneficiaire[0].cotisation_totale - ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12)).toFixed(2),
+        "Economie-mensuelle": (Montant_actuel_assurance - Cotisation_mensuelle).toFixed(2),
+        "total-de-l-assurance": (data.Tarif_beneficiaire[0].cotisation_totale).toFixed(2)
     };
     console.log(make);
     $.ajax({
