@@ -534,9 +534,11 @@ async function GetTariffs(token) {
             data.Tarif_beneficiaire[0].cotisation_totale - ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12)
         ).toFixed(2)
     );
-    $("#mensuelle-moyenne").attr(
+    $("#Economie-par-mois").attr(
         "fs-numbercount-end",
-        parseFloat(Cotisation_mensuelle).toFixed(2)
+        parseFloat(
+            Montant_actuel_assurance - Cotisation_mensuelle
+        ).toFixed(2)
     );
 
     jsonToSend.resultatform = resultats;
