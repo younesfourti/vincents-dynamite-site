@@ -324,7 +324,7 @@ async function GetTariffs(token) {
         login_courtier_zenioo: "henrycourtierstd@yopmail.com",
         code_courtier_zenioo: "AAOG",
         id_projet_partenaire: "EMP12334",
-        code_produit: "MP70",
+        code_produit: "MP80",
         taux_commission: "50/15",
         contrat: {
             type_projet: "residence_principale",
@@ -543,7 +543,7 @@ async function GetTariffs(token) {
 
     jsonToSend.resultatform = resultats;
     var make = {
-        "all data ": [jsonToSend, data],
+        "all data ": [data],
         "frais_courtage": frais_courtage,
         "Cotisation_mensuelle_ajustée annee 1 ": Cotisation_mensuelle_ajustée,
         "mensuelle-moyenne": parseFloat(Cotisation_mensuelle).toFixed(2),
