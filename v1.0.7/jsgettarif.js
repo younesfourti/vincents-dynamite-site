@@ -522,22 +522,21 @@ async function GetTariffs(token) {
     // Calcul de la cotisation mensuelle ajustée
     var Cotisation_mensuelle_ajustée = Cotisation_mensuelle + frais_courtage;
     $("#total-de-l-assurance").attr(
-        "fs-numbercount-end", (data.Tarif_beneficiaire[0].cotisation_totale).toFixed(2)
-    );
+        "fs-numbercount-end", parseFloat(data.Tarif_beneficiaire[0].cotisation_totale).toFixed(2));
     console.log(Cotisation_mensuelle_ajustée);
     // Mise à jour de l'attribut fs-numbercount-end pour l'année 2 avec la cotisation annuelle divisée par 12
     $("#Economie-mensuelle").attr(
         "fs-numbercount-end",
-        (Montant_actuel_assurance - Cotisation_mensuelle).toFixed(2));
+        parseFloat(Montant_actuel_assurance - Cotisation_mensuelle).toFixed(2));
     $("#Economie-globale").attr(
         "fs-numbercount-end",
-        (
+        parseFloat(
             data.Tarif_beneficiaire[0].cotisation_totale - ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12)
         ).toFixed(2)
     );
     $("#Economie-par-mois").attr(
         "fs-numbercount-end",
-        (
+        parseFloat(
             Montant_actuel_assurance - Cotisation_mensuelle
         ).toFixed(2)
     );
@@ -547,10 +546,10 @@ async function GetTariffs(token) {
         "all data ": [jsonToSend, data],
         "frais_courtage": frais_courtage,
         "Cotisation_mensuelle_ajustée annee 1 ": Cotisation_mensuelle_ajustée,
-        "mensuelle-moyenne": (Cotisation_mensuelle).toFixed(2),
-        "Economie-globale": (data.Tarif_beneficiaire[0].cotisation_totale - ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12)).toFixed(2),
-        "Economie-mensuelle": (Montant_actuel_assurance - Cotisation_mensuelle).toFixed(2),
-        "total-de-l-assurance": (data.Tarif_beneficiaire[0].cotisation_totale).toFixed(2)
+        "mensuelle-moyenne": parseFloat(Cotisation_mensuelle).toFixed(2),
+        "Economie-globale": parseFloat(data.Tarif_beneficiaire[0].cotisation_totale - ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12)).toFixed(2),
+        "Economie-mensuelle": parseFloat(Montant_actuel_assurance - Cotisation_mensuelle).toFixed(2),
+        "total-de-l-assurance": parseFloat(data.Tarif_beneficiaire[0].cotisation_totale).toFixed(2)
     };
     console.log(make);
     $.ajax({

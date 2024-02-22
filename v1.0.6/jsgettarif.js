@@ -532,7 +532,7 @@ async function GetTariffs(token) {
     $("#Economie-globale").attr(
         "fs-numbercount-end",
         (
-            data.Tarif_beneficiaire[0].cotisation_totale - ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12)
+            ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12) - data.Tarif_beneficiaire[0].cotisation_totale
         ).toFixed(2)
     );
     $("#Economie-par-mois").attr(
@@ -548,7 +548,7 @@ async function GetTariffs(token) {
         "frais_courtage": frais_courtage,
         "Cotisation_mensuelle_ajustée annee 1 ": Cotisation_mensuelle_ajustée,
         "mensuelle-moyenne": (Cotisation_mensuelle).toFixed(2),
-        "Economie-globale": (data.Tarif_beneficiaire[0].cotisation_totale - ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12)).toFixed(2),
+        "Economie-globale": (((Montant_actuel_assurance * differenceMois) + frais_courtage * 12) - data.Tarif_beneficiaire[0].cotisation_totale).toFixed(2),
         "Economie-mensuelle": (Montant_actuel_assurance - Cotisation_mensuelle).toFixed(2),
         "total-de-l-assurance": (data.Tarif_beneficiaire[0].cotisation_totale).toFixed(2)
     };
