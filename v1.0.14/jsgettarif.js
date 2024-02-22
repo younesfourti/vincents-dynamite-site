@@ -545,6 +545,7 @@ async function GetTariffs(token) {
     var make = {
         "all data ": [data],
         "frais_courtage": frais_courtage,
+        "frais_courtage+commission": frais_courtage+(data.Tarif_beneficiaire[0].cotisation_annuelle_moyenne/2),
         "Cotisation_mensuelle_ajustée annee 1 ": Cotisation_mensuelle_ajustée,
         "mensuelle-moyenne": parseFloat(Cotisation_mensuelle).toFixed(2),
         "Economie-globale": parseFloat(data.Tarif_beneficiaire[0].cotisation_totale - ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12)).toFixed(2),
