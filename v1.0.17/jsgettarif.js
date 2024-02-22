@@ -546,7 +546,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
 
     jsonToSend.resultatform = resultats;
     var make = {
-        "all data ": [data],
+        "all data ": [jsonToSend.resultatform,data],
         "frais_courtage": frais_courtage,
         "frais_courtage+commission": (frais_courtage * 12)+(data.Tarif_beneficiaire[0].cotisation_annuelle_moyenne/2),
         "Cotisation_mensuelle_ajustée annee 1 ": Cotisation_mensuelle_ajustée,
