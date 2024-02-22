@@ -540,6 +540,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
         frais_courtage = (Montant_actuel_assurance - Cotisation_mensuelle) / 2;
     }
     console.log("frais_courtage"+frais_courtage * 12);
+    
     // Calcul de la cotisation mensuelle ajustée
     var Cotisation_mensuelle_ajustée = Cotisation_mensuelle + frais_courtage;
     $("#total-de-l-assurance").attr(
