@@ -539,7 +539,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
     } else {
         frais_courtage = (Montant_actuel_assurance - Cotisation_mensuelle) / 2;
     }
-    console.log(frais_courtage);
+    console.log("frais_courtage"+frais_courtage * 12);
     // Calcul de la cotisation mensuelle ajustée
     var Cotisation_mensuelle_ajustée = Cotisation_mensuelle + frais_courtage;
     $("#total-de-l-assurance").attr(
@@ -552,7 +552,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
    $("#Economie-globale").attr(
         "fs-numbercount-end",
         parseFloat(
-            (Montant_actuel_assurance * differenceMois_1) - data.Tarif_beneficiaire[0].cotisation_totale + (frais_courtage * 12)
+            (Montant_actuel_assurance * differenceMois_1) - data.Tarif_beneficiaire[0].cotisation_totale - (frais_courtage * 12)
         ).toFixed(2)
     );
     $("#Economie-par-mois").attr(
@@ -564,7 +564,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
 
     jsonToSend.resultatform = resultats;
     var make = {
-        "all data ": [jsonToSend.resultatform,data],
+        "all data ": [jsonToSend, data],
         "frais_courtage": frais_courtage,
         "frais_courtage+commission": (frais_courtage * 12)+(data.Tarif_beneficiaire[0].cotisation_annuelle_moyenne/2),
         "Cotisation_mensuelle_ajustée annee 1 ": Cotisation_mensuelle_ajustée,
