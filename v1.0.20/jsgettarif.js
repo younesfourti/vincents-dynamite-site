@@ -34,7 +34,7 @@ document.getElementById("Zipco-emprunteur").addEventListener("blur", () => {
 });
 $(document).ready(function() {
     $('[data-toggle="datepicker"]').datepicker({
-        format: "mm-dd-yyyy",
+        format: "dd-mm-yyyy",
     });
     if (window.innerWidth < 768) {
         $('[data-toggle="datepicker"]').attr("readonly", "readonly");
@@ -381,7 +381,13 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
     };
     jsonToSend.prets[0].duree_remboursement_mois = parseFloat(document.getElementById("range_date-credit").value)*12;
     var dateOrigine = resultats.date_naissance_emprunteur;
-    var dateFormatee = moment(dateOrigine, "MM-DD-YYYY").format("YYYY-MM-DD");
+    var dateActuelle = moment();
+
+// Ajoute 2 mois à la date actuelle
+var dateDansDeuxMois = dateActuelle.add(2, 'months');
+
+// Formate la date dans le format YYYY-MM-DD
+var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
     jsonToSend.beneficiaires[0].date_naissance = dateFormatee;
     jsonToSend.beneficiaires[0].code_postal = resultats.zip;
     jsonToSend.contrat.type_projet = resultats.type_projet;
@@ -519,8 +525,12 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
     console.log("differenceMois : " + differenceMois_1);
 
     // Calcul initial de la cotisation mensuelle
-    var Cotisation_mensuelle =
-        data.Tarif_beneficiaire[0].cotisation_echeance_moyenne;
+    var Cotisation_mensuelle ; 
+    if (data.Tarif_beneficiaire.length >= 2) {
+        Cotisation_mensuelle = data.Tarif_beneficiaire[0].cotisation_echeance_moyenne + data.Tarif_beneficiaire[1].cotisation_echeance_moyenne;
+    } else {
+        Cotisation_mensuelle = data.Tarif_beneficiaire[0].cotisation_echeance_moyenne;
+    }
     console.log(Cotisation_mensuelle);
     // Récupération de la valeur actuelle de l'assurance depuis l'input et conversion en nombre
     var Montant_actuel_assurance =
@@ -533,12 +543,22 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
 
     // Calcul des frais de courtage
     var frais_courtage;
-
-    if (Montant_actuel_assurance - Cotisation_mensuelle < 50) {
-        frais_courtage = Montant_actuel_assurance - Cotisation_mensuelle;
+    if (data.Tarif_beneficiaire.length >= 2) {
+        if (Montant_actuel_assurance - Cotisation_mensuelle < 75) {
+            frais_courtage = Montant_actuel_assurance - Cotisation_mensuelle;
+        } else {
+            
+            frais_courtage = 75;
+        }
     } else {
-        frais_courtage = 50;
+        if (Montant_actuel_assurance - Cotisation_mensuelle < 50) {
+            frais_courtage = Montant_actuel_assurance - Cotisation_mensuelle;
+        } else {
+            
+            frais_courtage = 50;
+        }
     }
+    
     console.log("frais_courtage"+frais_courtage * 12);
     
     // Calcul de la cotisation mensuelle ajustée
