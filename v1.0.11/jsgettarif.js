@@ -525,9 +525,9 @@ async function GetTariffs(token) {
         "fs-numbercount-end", parseFloat(data.Tarif_beneficiaire[0].cotisation_totale).toFixed(2));
     console.log(Cotisation_mensuelle_ajustée);
     // Mise à jour de l'attribut fs-numbercount-end pour l'année 2 avec la cotisation annuelle divisée par 12
-    $("#Economie-mensuelle").attr(
+    $("#mensuelle-moyenne").attr(
         "fs-numbercount-end",
-        parseFloat(Montant_actuel_assurance - Cotisation_mensuelle).toFixed(2));
+        parseFloat(Cotisation_mensuelle).toFixed(2));
     $("#Economie-globale").attr(
         "fs-numbercount-end",
         parseFloat(
