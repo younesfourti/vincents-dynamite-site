@@ -502,7 +502,7 @@ async function GetTariffs(token) {
         parseFloat(document.getElementById("range_date-differe").value) || 0,
         document.getElementById("date_effet-2").value
     );
-    console.log("Mensualité calculée final : " + mensualite);
+
 
     // Calcul initial de la cotisation mensuelle
     var Cotisation_mensuelle =
