@@ -382,13 +382,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
     };
     jsonToSend.prets[0].duree_remboursement_mois = parseFloat(document.getElementById("range_date-credit").value)*12;
     var dateOrigine = resultats.date_naissance_emprunteur;
-    var dateActuelle = moment();
-
-// Ajoute 2 mois à la date actuelle
-var dateDansDeuxMois = dateActuelle.add(2, 'months');
-
-// Formate la date dans le format YYYY-MM-DD
-var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
+    var dateFormatee = moment(dateOrigine, "MM-DD-YYYY").format("YYYY-MM-DD");
     jsonToSend.beneficiaires[0].date_naissance = dateFormatee;
     jsonToSend.beneficiaires[0].code_postal = resultats.zip;
     jsonToSend.contrat.type_projet = resultats.type_projet;
