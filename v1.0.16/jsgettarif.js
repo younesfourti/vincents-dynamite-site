@@ -497,12 +497,8 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
         contentType: "application/json",
         data: JSON.stringify(jsonToSend),
     });
-    var differenceMois = CalculerDifferenceMois(
-        parseFloat(document.getElementById("range_date-credit").value),
-        parseFloat(document.getElementById("range_date-differe").value) || 0,
-        document.getElementById("date_effet-2").value
-    );
-    console.log("differenceMois : " + differenceMois);
+    var differenceMois_1 = parseFloat(jsonToSend.prets[0].duree_remboursement_mois) + parseFloat(jsonToSend.prets[0].dont_differe_mois);
+    console.log("differenceMois : " + differenceMois_1);
 
     // Calcul initial de la cotisation mensuelle
     var Cotisation_mensuelle =
@@ -535,10 +531,10 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
     $("#mensuelle-moyenne").attr(
         "fs-numbercount-end",
         parseFloat(Cotisation_mensuelle).toFixed(2));
-    $("#Economie-globale").attr(
+   $("#Economie-globale").attr(
         "fs-numbercount-end",
         parseFloat(
-            ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12) - data.Tarif_beneficiaire[0].cotisation_totale
+            (Montant_actuel_assurance * differenceMois_1) - data.Tarif_beneficiaire[0].cotisation_totale + (frais_courtage * 12)
         ).toFixed(2)
     );
     $("#Economie-par-mois").attr(
@@ -555,7 +551,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
         "frais_courtage+commission": (frais_courtage * 12)+(data.Tarif_beneficiaire[0].cotisation_annuelle_moyenne/2),
         "Cotisation_mensuelle_ajustée annee 1 ": Cotisation_mensuelle_ajustée,
         "mensuelle-moyenne": parseFloat(Cotisation_mensuelle).toFixed(2),
-        "Economie-globale": parseFloat(data.Tarif_beneficiaire[0].cotisation_totale - ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12)).toFixed(2),
+        "Economie-globale": parseFloat(data.Tarif_beneficiaire[0].cotisation_totale - ((Montant_actuel_assurance * differenceMois_1) + frais_courtage * 12)).toFixed(2),
         "Economie-mensuelle": parseFloat(Montant_actuel_assurance - Cotisation_mensuelle).toFixed(2),
         "total-de-l-assurance": parseFloat(data.Tarif_beneficiaire[0].cotisation_totale).toFixed(2)
     };
