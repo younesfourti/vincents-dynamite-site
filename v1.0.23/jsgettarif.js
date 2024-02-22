@@ -266,6 +266,7 @@ function calculerMensualite(
         tauxInteretMensuel;
     console.log("Capital restant dû: " + capitalRestantDu);
     $("#capitalRestantDu-2").val(capitalRestantDu.toFixed(2));
+    document.getElementById("capitalRestantDu-2").value = capitalRestantDu.toFixed(2);
     $('#capitalRestantDu-2').prop('disabled',true);
 
     // Retourner la mensualité calculée
