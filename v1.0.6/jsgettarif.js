@@ -197,7 +197,7 @@ async function updateListWithAPIdata(token) {
     });
 }
 
-function differenceMois(
+function CalculerDifferenceMois(
     differeRemboursementMois,
     dateString
 ) {
@@ -490,14 +490,7 @@ async function GetTariffs(token) {
         contentType: "application/json",
         data: JSON.stringify(jsonToSend),
     });
-    var mensualite = calculerMensualite(
-        parseFloat(document.getElementById("montant-du-pret-2").value),
-        parseFloat(document.getElementById("range_taux").value),
-        parseFloat(document.getElementById("range_date-credit").value),
-        parseFloat(document.getElementById("range_date-differe").value) || 0,
-        document.getElementById("date_effet-2").value
-    );
-    var differenceMois = differenceMois(
+    var differenceMois = CalculerDifferenceMois(
         parseFloat(document.getElementById("range_date-credit").value),
         parseFloat(document.getElementById("range_date-differe").value) || 0,
         document.getElementById("date_effet-2").value
