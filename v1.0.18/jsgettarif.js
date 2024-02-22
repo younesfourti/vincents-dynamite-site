@@ -197,10 +197,16 @@ async function updateListWithAPIdata(token) {
     });
 }
 
-function CalculerDifferenceMois(
+function calculerMoisRestants(
+    montantPret,
+    tauxInteret,
+    dureePretAnnees,
     differeRemboursementMois,
     dateString
 ) {
+    // Convertir la durée du prêt en mois
+    var dureePretMois = dureePretAnnees * 12;
+
     // Récupérer la date de début du prêt depuis le paramètre dateString
     var dateDebutPret = new Date(dateString);
 
@@ -213,7 +219,12 @@ function CalculerDifferenceMois(
         (dateActuelle.getMonth() - dateDebutPret.getMonth());
     differenceMois -= differeRemboursementMois;
     differenceMois = Math.max(0, differenceMois);
-    return differenceMois.toFixed(2);
+
+    // Calculer le nombre de mois restants jusqu'à la fin du prêt
+    var moisRestants = dureePretMois - differenceMois;
+
+    // Retourner le nombre de mois restants
+    return moisRestants;
 }
 
 function calculerMensualite(
@@ -368,6 +379,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
             franchise: "90",
         }, ],
     };
+    jsonToSend.prets[0].duree_remboursement_mois = parseFloat(document.getElementById("range_date-credit").value)*12;
     var dateOrigine = resultats.date_naissance_emprunteur;
     var dateFormatee = moment(dateOrigine, "MM-DD-YYYY").format("YYYY-MM-DD");
     jsonToSend.beneficiaires[0].date_naissance = dateFormatee;
@@ -497,7 +509,13 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
         contentType: "application/json",
         data: JSON.stringify(jsonToSend),
     });
-    var differenceMois_1 = parseFloat(jsonToSend.prets[0].duree_remboursement_mois) + parseFloat(jsonToSend.prets[0].dont_differe_mois);
+    var differenceMois_1 =calculerMoisRestants(
+        parseFloat(document.getElementById("montant-du-pret-2").value),
+        parseFloat(document.getElementById("range_taux").value),
+        parseFloat(document.getElementById("range_date-credit").value),
+        parseFloat(document.getElementById("range_date-differe").value) || 0,
+        document.getElementById("date_effet-2").value
+    );
     console.log("differenceMois : " + differenceMois_1);
 
     // Calcul initial de la cotisation mensuelle
