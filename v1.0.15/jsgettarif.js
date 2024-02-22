@@ -320,6 +320,13 @@ async function GetTariffs(token) {
         }
     });
     console.log(resultats);
+    var dateActuelle = moment();
+
+// Ajoute 2 mois à la date actuelle
+var dateDansDeuxMois = dateActuelle.add(2, 'months');
+
+// Formate la date dans le format YYYY-MM-DD
+var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
     var jsonToSend = {
         login_courtier_zenioo: "henrycourtierstd@yopmail.com",
         code_courtier_zenioo: "AAOG",
@@ -329,7 +336,7 @@ async function GetTariffs(token) {
         contrat: {
             type_projet: "residence_principale",
             type_contrat: "nouveau_pret",
-            date_effet: moment().format("YYYY-MM-DD"),
+            date_effet: dateFormatee,
         },
         beneficiaires: [{
             rang_beneficiaire: "1",
@@ -545,7 +552,7 @@ async function GetTariffs(token) {
     var make = {
         "all data ": [data],
         "frais_courtage": frais_courtage,
-        "frais_courtage+commission": frais_courtage+(data.Tarif_beneficiaire[0].cotisation_annuelle_moyenne/2),
+        "frais_courtage+commission": (frais_courtage * 12)+(data.Tarif_beneficiaire[0].cotisation_annuelle_moyenne/2),
         "Cotisation_mensuelle_ajustée annee 1 ": Cotisation_mensuelle_ajustée,
         "mensuelle-moyenne": parseFloat(Cotisation_mensuelle).toFixed(2),
         "Economie-globale": parseFloat(data.Tarif_beneficiaire[0].cotisation_totale - ((Montant_actuel_assurance * differenceMois) + frais_courtage * 12)).toFixed(2),
