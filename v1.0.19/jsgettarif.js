@@ -537,7 +537,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
     if (Montant_actuel_assurance - Cotisation_mensuelle < 50) {
         frais_courtage = Montant_actuel_assurance - Cotisation_mensuelle;
     } else {
-        frais_courtage = (Montant_actuel_assurance - Cotisation_mensuelle) / 2;
+        frais_courtage = 50;
     }
     console.log("frais_courtage"+frais_courtage * 12);
     
