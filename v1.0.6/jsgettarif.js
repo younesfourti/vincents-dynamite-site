@@ -197,7 +197,7 @@ async function updateListWithAPIdata(token) {
     });
 }
 
-function differenceMois(
+function calculerDifferenceMois(
     differeRemboursementMois,
     dateString
 ) {
@@ -497,7 +497,7 @@ async function GetTariffs(token) {
         parseFloat(document.getElementById("range_date-differe").value) || 0,
         document.getElementById("date_effet-2").value
     );
-    var differenceMois = differenceMois(
+    var differenceMois = calculerDifferenceMois(
         parseFloat(document.getElementById("range_date-credit").value),
         parseFloat(document.getElementById("range_date-differe").value) || 0,
         document.getElementById("date_effet-2").value
