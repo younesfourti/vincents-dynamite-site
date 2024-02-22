@@ -34,7 +34,7 @@ document.getElementById("Zipco-emprunteur").addEventListener("blur", () => {
 });
 $(document).ready(function() {
     $('[data-toggle="datepicker"]').datepicker({
-        format: "dd-mm-yyyy",
+        format: "mm-dd-yyyy",
     });
     if (window.innerWidth < 768) {
         $('[data-toggle="datepicker"]').attr("readonly", "readonly");
@@ -266,8 +266,7 @@ function calculerMensualite(
         tauxInteretMensuel;
     console.log("Capital restant dû: " + capitalRestantDu);
     $("#capitalRestantDu-2").val(capitalRestantDu.toFixed(2));
-    document.getElementById("capitalRestantDu-2").value = capitalRestantDu.toFixed(2);
-    $('#capitalRestantDu-2').prop('disabled', true);
+    $('#capitalRestantDu-2').prop('disabled',true);
 
     // Retourner la mensualité calculée
     return mensualite.toFixed(2);
