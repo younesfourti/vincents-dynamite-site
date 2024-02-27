@@ -421,13 +421,14 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
     jsonToSend.beneficiaires[0].code_postal = resultats.zip;
     jsonToSend.contrat.type_projet = resultats.type_projet;
     jsonToSend.prets[0].taux_pret = resultats.range_taux;
-    jsonToSend.prets[0].crd = calculercapitalRestantDu(
+    var calculercapitalRestantDu=calculercapitalRestantDu(
         parseFloat(document.getElementById("montant-du-pret-2").value),
         parseFloat(document.getElementById("range_taux").value),
         parseFloat(document.getElementById("range_date-credit").value),
         parseFloat(document.getElementById("range_date-differe").value) || 0,
         document.getElementById("date_effet-2").value
     );
+    jsonToSend.prets[0].crd = calculercapitalRestantDu ; 
     if (resultats["differe-oui"] === "on") {
         jsonToSend.prets[0].dont_differe_mois = resultats["range_date-differe"];
     }
