@@ -255,11 +255,17 @@ function calculercapitalRestantDu(
         (montantPret * tauxInteretMensuel) /
         (1 - Math.pow(1 + tauxInteretMensuel, -dureePretMois));
 
-    // Récupérer la date de début du prêt depuis le paramètre dateString
+    console.log("Mensualité:", mensualite);
+
+    // Analyser la date de début du prêt depuis la chaîne de date
     var dateDebutPret = new Date(dateString);
+
+    console.log("Date de début du prêt:", dateDebutPret);
 
     // Récupérer la date actuelle
     var dateActuelle = new Date();
+
+    console.log("Date actuelle:", dateActuelle);
 
     // Calculer le nombre de mois écoulés depuis le début du prêt, en tenant compte du différé de remboursement
     var differenceMois =
@@ -268,18 +274,30 @@ function calculercapitalRestantDu(
     differenceMois -= differeRemboursementMois;
     differenceMois = Math.max(0, differenceMois);
 
+    console.log("Différence en mois:", differenceMois);
+
     // Calculer le capital restant dû (formule 1)
     var capitalRestantDu =
         (mensualite *
-            (1 -
-                Math.pow(1 + tauxInteretMensuel, -(dureePretMois - differenceMois)))) /
+            (1 - Math.pow(1 + tauxInteretMensuel, -(dureePretMois - differenceMois)))) /
         tauxInteretMensuel;
 
-    capitalRestantDu = capitalRestantDu.toFixed(2); // Arrondir à 2 décimales
+    console.log("Capital restant dû:", capitalRestantDu);
+
+    var crd = capitalRestantDu.toFixed(2); // Arrondir à 2 décimales
 
     // Accéder à l'élément HTML avec getElementById
-    return capitalRestantDu;
+    return crd;
 }
+
+// Appel de la fonction avec des valeurs
+console.log(calculercapitalRestantDu(
+        parseFloat(document.getElementById("montant-du-pret-2").value),
+        parseFloat(document.getElementById("range_taux").value),
+        parseFloat(document.getElementById("range_date-credit").value),
+        parseFloat(document.getElementById("range_date-differe").value) || 0,
+        "2020-02-27" // Format YYYY-MM-DD
+    ));
 function calculerMensualite(
     montantPret,
     tauxInteret,
