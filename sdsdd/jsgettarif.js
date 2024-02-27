@@ -291,13 +291,7 @@ function calculercapitalRestantDu(
 }
 
 // Appel de la fonction avec des valeurs
-console.log(calculercapitalRestantDu(
-        parseFloat(document.getElementById("montant-du-pret-2").value),
-        parseFloat(document.getElementById("range_taux").value),
-        parseFloat(document.getElementById("range_date-credit").value),
-        parseFloat(document.getElementById("range_date-differe").value) || 0,
-        "2020-02-27" // Format YYYY-MM-DD
-    ));
+
 function calculerMensualite(
     montantPret,
     tauxInteret,
@@ -446,6 +440,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
         parseFloat(document.getElementById("range_date-differe").value) || 0,
         document.getElementById("date_effet-2").value
     );
+    console.log("capitalRestantDu:", capitalRestantDu);
     jsonToSend.prets[0].crd = capitalRestantDu ; 
     if (resultats["differe-oui"] === "on") {
         jsonToSend.prets[0].dont_differe_mois = resultats["range_date-differe"];
