@@ -258,7 +258,7 @@ function calculercapitalRestantDu(
     console.log("Mensualité:", mensualite);
 
     // Analyser la date de début du prêt depuis la chaîne de date
-    var dateDebutPret = new Date(dateString);
+    var dateDebutPret = moment(dateString, "DD-MM-YYYY").format("YYYY-MM-DD");
 
     console.log("Date de début du prêt:", dateDebutPret);
 
