@@ -1,0 +1,300 @@
+document.getElementById("zip").addEventListener("blur", () => {
+    var e = document.getElementById("zip").value,
+        t = "https://api.zippopotam.us/fr/" + e;
+    fetch(t)
+        .then((e) => e.json())
+        .then((e) => {
+            var t = e.places[0]["place name"],
+                a = e.country;
+            (document.getElementById("ville-emprunteur").value = t),
+            (document.getElementById("pays-emprunteur").value = a);
+        })
+        .catch((e) => {
+            console.error("Erreur lors de la récupération des données:", e),
+                (document.getElementById("ville-emprunteur").value =
+                    "Erreur lors de la récupération des données. Veuillez réessayer.");
+        });
+});
+document.getElementById("Zipco-emprunteur").addEventListener("blur", () => {
+    var e = document.getElementById("Zipco-emprunteur").value,
+        t = "https://api.zippopotam.us/fr/" + e;
+    fetch(t)
+        .then((e) => e.json())
+        .then((e) => {
+            var t = e.places[0]["place name"],
+                a = e.country;
+            (document.getElementById("Ville-co-emprunteur").value = t),
+            (document.getElementById("Pays-co-emprunteur").value = a);
+        })
+        .catch((e) => {
+            console.error("Erreur lors de la récupération des données:", e),
+                (document.getElementById("Ville-co-emprunteur").value =
+                    "Erreur lors de la récupération des données. Veuillez réessayer.");
+        });
+});
+$(document).ready(function() {
+    $('[data-toggle="datepicker"]').datepicker({
+        format: "dd-mm-yyyy",
+        startDate : "1960",
+        endDate : "2006"
+    });
+    if (window.innerWidth < 768) {
+        $('[data-toggle="datepicker"]').attr("readonly", "readonly");
+    }
+});
+
+document
+    .getElementById("co-emprunteur-non")
+    .addEventListener("click", function() {
+        // Sélectionnez tous les éléments avec la classe "partis-co-emprunteur"
+        var elements = document.getElementsByClassName("partis-co-emprunteur");
+
+        // Parcourir chaque élément et modifier sa visibilité
+        for (var i = 0; i < elements.length; i++) {
+            // Vérifiez si l'élément est visible ou non
+            if (elements[i].style.display !== "none") {
+                // Si l'élément est visible, le masquer
+                elements[i].style.display = "none";
+            } else {
+                // Sinon, le rendre visible
+                elements[i].style.display = "block";
+            }
+        }
+    });
+var Webflow = Webflow || [];
+Webflow.push(function() {
+    var l = $("#flowbaseSlider .w-slider-arrow-left");
+    var r = $("#flowbaseSlider .w-slider-arrow-right");
+    $("#flowbaseSlider").on("click", "#co-emprunteur-next", function(e) {
+        if ($("#co-emprunteur-oui").is(":checked")) {
+            r.trigger("tap");
+        } else if ($("#co-emprunteur-non").is(":checked")) {
+            r.trigger("tap");
+            r.trigger("tap");
+            r.trigger("tap");
+        }
+    });
+    $("#flowbaseSlider").on("click", "#back-co-emprunteur", function(e) {
+        if ($("#co-emprunteur-oui").is(":checked")) {
+            l.trigger("tap");
+        } else if ($("#co-emprunteur-non").is(":checked")) {
+            l.trigger("tap");
+            l.trigger("tap");
+            l.trigger("tap");
+        }
+    });
+    $("#flowbaseSlider").on("click", "#differe-next", function(e) {
+        if ($("#differe-oui").is(":checked")) {
+            r.trigger("tap");
+        } else if ($("#differe-non").is(":checked")) {
+            r.trigger("tap");
+            r.trigger("tap");
+        }
+    });
+    $("#flowbaseSlider").on("click", "#back-differe", function(e) {
+        if ($("#differe-oui").is(":checked")) {
+            l.trigger("tap");
+        } else if ($("#differe-non").is(":checked")) {
+            l.trigger("tap");
+            l.trigger("tap");
+        }
+    });
+    $("#flowbaseSlider")
+        .on(
+            "click",
+            ".slider-left:not(#back-co-emprunteur, #back-differe)",
+            function() {
+                l.trigger("tap");
+            }
+        )
+        .on(
+            "click",
+            ".slider-right:not(#co-emprunteur-next, #differe-next)",
+            function() {
+                r.trigger("tap");
+            }
+        );
+});
+$("#range_price, #range_CRD, #range_cotisation").ionRangeSlider({
+    grid: !0,
+    min: 5000,
+    max: 35000,
+    from: 2500,
+    prefix: "$",
+    postfix: "+",
+    hide_min_max: !0,
+    decorate_both: !0,
+    force_edges: !0,
+    step: 50,
+});
+$("#range_taux").ionRangeSlider({
+    grid: !0,
+    min: 0,
+    max: 15,
+    from: 6,
+    postfix: "%",
+    hide_min_max: !0,
+    decorate_both: !0,
+    force_edges: !0,
+    step: 0.1,
+});
+$("#range_date-credit").ionRangeSlider({
+    grid: !0,
+    min: 1,
+    max: 27,
+    from_min: 1,
+    from: 1,
+    postfix: "ans",
+    step: 1,
+});
+$("#range_date-differe").ionRangeSlider({
+    grid: !0,
+    min: 0,
+    max: 24,
+    from_min: 0,
+    from: 0,
+    postfix: "mois",
+    hide_min_max: !0,
+    force_edges: !0,
+    step: 1,
+});
+$("#fetchbanque").click(function() {
+    performFetchAndUpdateList();
+    console.log("hello");
+});
+async function performFetchAndUpdateList() {
+    if ($("#banque").data("fetching")) return;
+    $("#banque").data("fetching", !0);
+    try {
+        const tokenResponse = await $.ajax({
+            url: "https://demosoizic.zenioo.com/Mortgage/rest/v1/GetToken",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                Cle_partenaire: "TiTAndeMO2024",
+                Code_partenaire: "F92ApnKiUAqlXEAk1hp99LegD",
+            }),
+        });
+        const token = tokenResponse.GetTokenResponse.token;
+        await updateListWithAPIdata(token);
+    } finally {
+        $("#banque").data("fetching", !1);
+    }
+}
+async function updateListWithAPIdata(token) {
+    const data = await $.ajax({
+        url: "https://demosoizic.zenioo.com/Mortgage/rest/v1/GetBanks",
+        method: "GET",
+        headers: {
+            Authorization: token,
+        },
+    });
+    const $banqueSelect = $("#banque");
+    $banqueSelect.empty();
+    data.organismes_preteurs.forEach(function(org) {
+        const $option = $("<option>")
+            .val(org.id_organisme_preteur)
+            .text(org.raison_sociale);
+        $banqueSelect.append($option);
+    });
+}
+
+function calculerMoisRestants(
+    montantPret,
+    tauxInteret,
+    dureePretAnnees,
+    differeRemboursementMois,
+    dateString
+) {
+    // Convertir la durée du prêt en mois
+    var dureePretMois = dureePretAnnees * 12;
+
+    // Récupérer la date de début du prêt depuis le paramètre dateString
+    var dateDebutPret = new Date(dateString);
+
+    // Récupérer la date actuelle
+    var dateActuelle = new Date();
+
+    // Calculer le nombre de mois écoulés depuis le début du prêt, en tenant compte du différé de remboursement
+    var differenceMois =
+        (dateActuelle.getFullYear() - dateDebutPret.getFullYear()) * 12 +
+        (dateActuelle.getMonth() - dateDebutPret.getMonth());
+    differenceMois -= differeRemboursementMois;
+    differenceMois = Math.max(0, differenceMois);
+
+    // Calculer le nombre de mois restants jusqu'à la fin du prêt
+    var moisRestants = dureePretMois - differenceMois;
+
+    // Retourner le nombre de mois restants
+    return moisRestants;
+}
+
+function calculerMensualite(
+    montantPret,
+    tauxInteret,
+    dureePretAnnees,
+    differeRemboursementMois,
+    dateString
+) {
+    // Convertir la durée du prêt en mois
+    var dureePretMois = dureePretAnnees * 12;
+
+    // Convertir le taux d'intérêt annuel en taux mensuel (en décimale)
+    var tauxInteretMensuel = tauxInteret / 100 / 12;
+
+    // Calculer la mensualité (formule 2)
+    var mensualite =
+        (montantPret * tauxInteretMensuel) /
+        (1 - Math.pow(1 + tauxInteretMensuel, -dureePretMois));
+
+    // Récupérer la date de début du prêt depuis le paramètre dateString
+    var dateDebutPret = new Date(dateString);
+
+    // Récupérer la date actuelle
+    var dateActuelle = new Date();
+
+    // Calculer le nombre de mois écoulés depuis le début du prêt, en tenant compte du différé de remboursement
+    var differenceMois =
+        (dateActuelle.getFullYear() - dateDebutPret.getFullYear()) * 12 +
+        (dateActuelle.getMonth() - dateDebutPret.getMonth());
+    differenceMois -= differeRemboursementMois;
+    differenceMois = Math.max(0, differenceMois);
+
+    // Calculer le capital restant dû (formule 1)
+    var capitalRestantDu =
+        (mensualite *
+            (1 -
+                Math.pow(1 + tauxInteretMensuel, -(dureePretMois - differenceMois)))) /
+        tauxInteretMensuel;
+
+    capitalRestantDu = capitalRestantDu.toFixed(2); // Arrondir à 2 décimales
+
+    // Accéder à l'élément HTML avec getElementById
+    var capitalRestantDuElement = document.getElementById("capitalRestantDu-2");
+
+    // Vérifier si l'élément existe
+    if (capitalRestantDuElement) {
+        // Affecter la valeur à l'élément HTML
+        capitalRestantDuElement.value = capitalRestantDu;
+        // Désactiver l'élément pour éviter toute modification
+        capitalRestantDuElement.disabled = true;
+    } else {
+        console.error("L'élément avec l'ID capitalRestantDu-2 n'a pas été trouvé.");
+    }
+
+    // Retourner la mensualité calculée
+    return mensualite.toFixed(2);
+}
+// Récupérer les valeurs des éléments HTML
+$("#go_calcule, #differe-next , triggerTarifs").click(function() {
+    var mensualite = calculerMensualite(
+        parseFloat(document.getElementById("montant-du-pret-2").value),
+        parseFloat(document.getElementById("range_taux").value),
+        parseFloat(document.getElementById("range_date-credit").value),
+        parseFloat(document.getElementById("range_date-differe").value) || 0,
+        document.getElementById("date_effet-2").value
+    );
+
+    $('#mensualit-sans-assurance').text("Nous vous affichons le montant de la mensualité sans assurance de " + mensualite + "€, (vous pouvez l utiliser comme base)");
+    console.log("Mensualité calculée: " + mensualite);
+});
