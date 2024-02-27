@@ -42,7 +42,16 @@ $(document).ready(function() {
         $('[data-toggle="datepicker"]').attr("readonly", "readonly");
     }
 });
-
+$(document).ready(function() {
+    $('[data-toggle="datepicker2"]').datepicker({
+        format: "DD-MM-YYYY",
+        startDate : "2016",
+        endDate : "2025"
+    });
+    if (window.innerWidth < 768) {
+        $('[data-toggle="datepicker"]').attr("readonly", "readonly");
+    }
+});
 document
     .getElementById("co-emprunteur-non")
     .addEventListener("click", function() {
