@@ -219,7 +219,7 @@ function calculerMoisRestants(
     var dureePretMois = dureePretAnnees * 12;
 
     // Récupérer la date de début du prêt depuis le paramètre dateString
-    var dateDebutPret = new Date(dateString);
+    var dateDebutPret = moment(dateString, "DD-MM-YYYY").toDate();
 
     // Récupérer la date actuelle
     var dateActuelle = new Date();
