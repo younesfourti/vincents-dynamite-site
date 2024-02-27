@@ -228,7 +228,49 @@ function calculerMoisRestants(
     // Retourner le nombre de mois restants
     return moisRestants;
 }
+function calculercapitalRestantDu(
+    montantPret,
+    tauxInteret,
+    dureePretAnnees,
+    differeRemboursementMois,
+    dateString
+) {
+    // Convertir la durée du prêt en mois
+    var dureePretMois = dureePretAnnees * 12;
 
+    // Convertir le taux d'intérêt annuel en taux mensuel (en décimale)
+    var tauxInteretMensuel = tauxInteret / 100 / 12;
+
+    // Calculer la mensualité (formule 2)
+    var mensualite =
+        (montantPret * tauxInteretMensuel) /
+        (1 - Math.pow(1 + tauxInteretMensuel, -dureePretMois));
+
+    // Récupérer la date de début du prêt depuis le paramètre dateString
+    var dateDebutPret = new Date(dateString);
+
+    // Récupérer la date actuelle
+    var dateActuelle = new Date();
+
+    // Calculer le nombre de mois écoulés depuis le début du prêt, en tenant compte du différé de remboursement
+    var differenceMois =
+        (dateActuelle.getFullYear() - dateDebutPret.getFullYear()) * 12 +
+        (dateActuelle.getMonth() - dateDebutPret.getMonth());
+    differenceMois -= differeRemboursementMois;
+    differenceMois = Math.max(0, differenceMois);
+
+    // Calculer le capital restant dû (formule 1)
+    var capitalRestantDu =
+        (mensualite *
+            (1 -
+                Math.pow(1 + tauxInteretMensuel, -(dureePretMois - differenceMois)))) /
+        tauxInteretMensuel;
+
+    capitalRestantDu = capitalRestantDu.toFixed(2); // Arrondir à 2 décimales
+
+    // Accéder à l'élément HTML avec getElementById
+    return capitalRestantDu.toFixed(2);
+}
 function calculerMensualite(
     montantPret,
     tauxInteret,
@@ -403,7 +445,13 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
     jsonToSend.beneficiaires[0].code_postal = resultats.zip;
     jsonToSend.contrat.type_projet = resultats.type_projet;
     jsonToSend.prets[0].taux_pret = resultats.range_taux;
-    jsonToSend.prets[0].crd = resultats["capitalRestantDu-2"];
+    jsonToSend.prets[0].crd = calculercapitalRestantDu(
+        parseFloat(document.getElementById("montant-du-pret-2").value),
+        parseFloat(document.getElementById("range_taux").value),
+        parseFloat(document.getElementById("range_date-credit").value),
+        parseFloat(document.getElementById("range_date-differe").value) || 0,
+        document.getElementById("date_effet-2").value
+    );
     if (resultats["differe-oui"] === "on") {
         jsonToSend.prets[0].dont_differe_mois = resultats["range_date-differe"];
     }
