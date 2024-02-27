@@ -278,7 +278,7 @@ function calculercapitalRestantDu(
     capitalRestantDu = capitalRestantDu.toFixed(2); // Arrondir à 2 décimales
 
     // Accéder à l'élément HTML avec getElementById
-    return capitalRestantDu.toFixed(2);
+    return capitalRestantDu;
 }
 function calculerMensualite(
     montantPret,
@@ -297,39 +297,6 @@ function calculerMensualite(
     var mensualite =
         (montantPret * tauxInteretMensuel) /
         (1 - Math.pow(1 + tauxInteretMensuel, -dureePretMois));
-
-    // Récupérer la date de début du prêt depuis le paramètre dateString
-    var dateDebutPret = new Date(dateString);
-
-    // Récupérer la date actuelle
-    var dateActuelle = new Date();
-
-    // Calculer le nombre de mois écoulés depuis le début du prêt, en tenant compte du différé de remboursement
-    var differenceMois =
-        (dateActuelle.getFullYear() - dateDebutPret.getFullYear()) * 12 +
-        (dateActuelle.getMonth() - dateDebutPret.getMonth());
-    differenceMois -= differeRemboursementMois;
-    differenceMois = Math.max(0, differenceMois);
-
-    // Calculer le capital restant dû (formule 1)
-    var capitalRestantDu =
-        (mensualite *
-            (1 -
-                Math.pow(1 + tauxInteretMensuel, -(dureePretMois - differenceMois)))) /
-        tauxInteretMensuel;
-
-    capitalRestantDu = capitalRestantDu.toFixed(2); // Arrondir à 2 décimales
-
-    // Accéder à l'élément HTML avec getElementById
-
-    // Vérifier si l'élément existe
-    if (resultats["capitalRestantDu-2"]) {
-       
-        resultats["capitalRestantDu-2"] = capitalRestantDu;
-       
-    } else {
-        console.error("L'élément avec l'ID capitalRestantDu-2 n'a pas été trouvé.");
-    }
     return mensualite.toFixed(2);
 }
 // Récupérer les valeurs des éléments HTML
