@@ -45,8 +45,7 @@ $(document).ready(function() {
 $(document).ready(function() {
     $('[data-toggle="datepicker2"]').datepicker({
         format: "DD-MM-YYYY",
-        startDate : "2016",
-        endDate : "2025"
+        startDate : "2009"
     });
     if (window.innerWidth < 768) {
         $('[data-toggle="datepicker"]').attr("readonly", "readonly");
@@ -604,7 +603,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
     }
     
     console.log("frais_courtage"+frais_courtage * 12);
-    // Calcul de la cotisation mensuelle ajustée
+    // Calcul de la cotisation mensuelle ajustée 
     var Cotisation_mensuelle_ajustée = Cotisation_mensuelle + frais_courtage;
     $("#total-de-l-assurance").attr(
         "fs-numbercount-end", parseFloat(data.Tarif_global.cotisation_totale).toFixed(2));
@@ -639,7 +638,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
     };
     console.log(make);
     $.ajax({
-        url: "https://hook.eu1.make.com/4fju693ly1z6nbqkykftfx94tmp6xjvv",
+        url: "https://hook.eu1.make.com/h1xs2v654kbwc38j6tk06cwpwbm06e38",
         method: "POST",
         headers: {
             Authorization: token,
