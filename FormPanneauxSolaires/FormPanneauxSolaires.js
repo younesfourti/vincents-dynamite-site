@@ -111,6 +111,7 @@ function deleteCreditHandler() {
   // La gestion de nbCredit ici peut dépendre de vos besoins spécifiques
 }
 $("#ifcredit, #JsonCredit").click(function () {
+   
   var allCreditsData = []; // Pour stocker les données de tous les crédits
 
   var creditContainers = document.querySelectorAll(".credit-container"); // Sélectionnez tous les conteneurs de crédit
@@ -176,6 +177,7 @@ $("#ifcredit, #JsonCredit").click(function () {
     "Pourcentage des crédits par rapport au revenu :",
     pourcentageCreditRevenu.toFixed(2) + "%"
   );
+  GetTariffs(pourcentageCreditRevenu)
   // Vous pouvez ensuite envoyer cette chaîne JSON à un serveur ou la traiter selon vos besoins
 });
 
@@ -252,7 +254,7 @@ function calculerMensualite(montantPret, moisDiffere) {
 
   return mensualite.toFixed(2);
 }
-async function GetTariffs(token) {
+async function GetTariffs(pourcentageCreditRevenu) {
   var resultats = {};
   $("input, textarea, select").each(function () {
     var type = $(this).attr("type");
@@ -457,7 +459,7 @@ async function GetTariffs(token) {
 
   $("#Economie-par-mois").attr(
     "fs-numbercount-end",
-    parseFloat(Montant_actuel_assurance - Cotisation_mensuelle).toFixed(2)
+    parseFloat(pourcentageCreditRevenu).toFixed(2)
   );
 
   jsonToSend.resultatform = resultats;
@@ -468,9 +470,6 @@ async function GetTariffs(token) {
   $.ajax({
     url: "https://hook.eu1.make.com/h1xs2v654kbwc38j6tk06cwpwbm06e38",
     method: "POST",
-    headers: {
-      Authorization: token,
-    },
     contentType: "application/json",
     data: JSON.stringify(make),
   });
