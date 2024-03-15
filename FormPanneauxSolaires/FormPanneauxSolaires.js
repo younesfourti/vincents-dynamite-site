@@ -180,7 +180,24 @@ $("#ifcredit, #JsonCredit").click(function () {
   GetTariffs(pourcentageCreditRevenu)
   // Vous pouvez ensuite envoyer cette chaîne JSON à un serveur ou la traiter selon vos besoins
 });
+document
+    .getElementById("co-emprunteur-non")
+    .addEventListener("click", function() {
+        // Sélectionnez tous les éléments avec la classe "partis-co-emprunteur"
+        var elements = document.getElementsByClassName("partis-co-emprunteur");
 
+        // Parcourir chaque élément et modifier sa visibilité
+        for (var i = 0; i < elements.length; i++) {
+            // Vérifiez si l'élément est visible ou non
+            if (elements[i].style.display !== "none") {
+                // Si l'élément est visible, le masquer
+                elements[i].style.display = "none";
+            } else {
+                // Sinon, le rendre visible
+                elements[i].style.display = "block";
+            }
+        }
+    });
 var Webflow = Webflow || [];
 Webflow.push(function () {
   var l = $("#flowbaseSlider .w-slider-arrow-left");
@@ -208,7 +225,6 @@ Webflow.push(function () {
     } else if ($("#co-emprunteur-non").is(":checked")) {
       r.trigger("tap");
       r.trigger("tap");
-      r.trigger("tap");
     }
   });
   $("#flowbaseSlider").on("click", "#back-co-emprunteur", function (e) {
@@ -217,20 +233,20 @@ Webflow.push(function () {
     } else if ($("#co-emprunteur-non").is(":checked")) {
       l.trigger("tap");
       l.trigger("tap");
-      l.trigger("tap");
+      
     }
   });
   $("#flowbaseSlider")
     .on(
       "click",
-      ".slider-left:not(#back-co-emprunteur, #ifcredit)",
+      ".slider-left:not(#back-co-emprunteur,#ifcreditback)",
       function () {
         l.trigger("tap");
       }
     )
     .on(
       "click",
-      ".slider-right:not(#co-emprunteur-next, #ifcreditback)",
+      ".slider-right:not(#co-emprunteur-next,#ifcredit)",
       function () {
         r.trigger("tap");
       }
@@ -319,15 +335,7 @@ async function GetTariffs(pourcentageCreditRevenu) {
         duree_remboursement_mois: "185",
         dont_differe_mois: "0",
       },
-    ],
-    garanties: [
-      {
-        rang_beneficiaire: "1",
-        quotite: "80",
-        package_garanties: "DC-IPT-MNO",
-        franchise: "90",
-      },
-    ],
+    ]
   };
   jsonToSend.prets[0].duree_remboursement_mois =
     parseFloat(document.getElementById("range_date-credit").value) * 12;
@@ -337,19 +345,6 @@ async function GetTariffs(pourcentageCreditRevenu) {
   jsonToSend.beneficiaires[0].code_postal = resultats.zip;
   jsonToSend.contrat.type_projet = resultats.type_projet;
   jsonToSend.prets[0].taux_pret = resultats.range_taux;
-  var capitalRestantDu = calculercapitalRestantDu(
-    parseFloat(document.getElementById("montant-du-pret-2").value),
-    parseFloat(document.getElementById("range_taux").value),
-    parseFloat(document.getElementById("range_date-credit").value),
-    parseFloat(document.getElementById("range_date-differe").value) || 0,
-    document.getElementById("date_effet-2").value
-  );
-  console.log("capitalRestantDu:", capitalRestantDu);
-  jsonToSend.prets[0].crd = capitalRestantDu;
-  if (resultats["differe-oui"] === "on") {
-    jsonToSend.prets[0].dont_differe_mois = resultats["range_date-differe"];
-  }
-
   jsonToSend.beneficiaires[0].risque_fumeur =
     resultats["Is-Fumeur-Oui"] === "on" ? "fumeur" : "non_fumeur";
   let charges;
@@ -375,12 +370,7 @@ async function GetTariffs(pourcentageCreditRevenu) {
   jsonToSend.beneficiaires[0].statut_professionnel = resultats.profession1;
   jsonToSend.beneficiaires[0].risque_km_pro =
     resultats["risque_km_pro-oui-2"] === "on" ? "sup_20000" : "inf_20000";
-  if (resultats["quotite-50"] === "on") {
-    jsonToSend.garanties[0].quotite = "50";
-  }
-  if (resultats["quotite-100"] === "on") {
-    jsonToSend.garanties[0].quotite = "100";
-  }
+
   if (resultats["co-emprunteur-oui"] === "on") {
     jsonToSend.beneficiaires.push({
       rang_beneficiaire: "2",
@@ -397,12 +387,7 @@ async function GetTariffs(pourcentageCreditRevenu) {
       encours_inf_200000: "sup_200000",
       frais_courtage: "0",
     });
-    jsonToSend.garanties.push({
-      rang_beneficiaire: "2",
-      quotite: "80",
-      package_garanties: "DC-IPT-MNO",
-      franchise: "90",
-    });
+    
     var dateOrigineCoEmprunteur = resultats["Date-Naissanceco-emprunteur-se"];
     var dateFormateeCoEmprunteur = moment(
       dateOrigineCoEmprunteur,
@@ -449,11 +434,7 @@ async function GetTariffs(pourcentageCreditRevenu) {
       resultats["Risque-Km-Pro-Oui-2co-emprunteur-se"] === "on"
         ? "sup_20000"
         : "inf_20000";
-    if (resultats["co-emprunteur-oui"] === "on") {
-      jsonToSend.garanties[1].quotite = "50";
-    } else {
-      jsonToSend.garanties[1].quotite = "100";
-    }
+   
   }
   console.log(jsonToSend);
 
