@@ -295,26 +295,183 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString) {
     }
   });
   //console.log(resultats);
-  var jsonToSend = {};
+  var jsonToSend = {
+    login_courtier_zenioo: "henrycourtierstd@yopmail.com",
+    code_courtier_zenioo: "AAOG",
+    id_projet_partenaire: "EMP12334",
+    code_produit: "MP80",
+    taux_commission: "50/15",
+    contrat: {
+        type_projet: "residence_principale",
+        type_contrat: "nouveau_pret",
+        date_effet: dateFormatee,
+    },
+    beneficiaires: [{
+        rang_beneficiaire: "1",
+        role: "souscripteur",
+        type_assure: "emprunteur",
+        date_naissance: "1999-05-04",
+        code_postal: "69008",
+        statut_professionnel: "salarie",
+        risque_km_pro: "aucun",
+        risque_travail_hauteur: "inf_15m",
+        risque_port_charges: "sup_15kg",
+        risque_fumeur: "non_fumeur",
+        risque_ppe: "aucun",
+        encours_inf_200000: "sup_200000",
+        frais_courtage: "0",
+    }, ],
+    prets: [{
+        rang_pret: "1",
+        crd: "",
+        type_pret: "amortissable",
+        taux_pret: "1.5",
+        duree_remboursement_mois: "185",
+        dont_differe_mois: "0",
+    }, ],
+    garanties: [{
+        rang_beneficiaire: "1",
+        quotite: "80",
+        package_garanties: "DC-IPT-MNO",
+        franchise: "90",
+    }, ],
+};
+
+
   console.log(jsonToSend);
-  function calculerProbabilite(pourcentageCreditRevenu) {
-    if (pourcentageCreditRevenu >= 45) {
-      return 0; // Peu probable
-    } else if (pourcentageCreditRevenu >= 35 && pourcentageCreditRevenu < 45) {
-      return 0.3; // 30% de probabilité que le dossier passe
-    } else if (pourcentageCreditRevenu >= 25 && pourcentageCreditRevenu < 35) {
-      return 0.5; // 50% de probabilité que le dossier passe
-    } else if (pourcentageCreditRevenu >= 0 && pourcentageCreditRevenu < 25) {
-      return 0.7; // 70% de probabilité que le dossier passe
-    } else {
-      return -1; // Code d'erreur pour une valeur invalide
-    }
-  }
   var Probabilite = calculerProbabilite(pourcentageCreditRevenu);
   $("#Economie-globale").attr(
     "fs-numbercount-end",
     parseFloat(Probabilite * 100).toFixed(2)
   );
+
+
+
+
+// Assurez-vous que les valeurs nécessaires sont définies pour éviter les erreurs
+var dateOrigine = resultats.date_naissance_emprunteur || "";
+var dateFormatee = moment(dateOrigine, "DD-MM-YYYY").format("YYYY-MM-DD") || "";
+
+
+// Gérer les champs éventuellement non définis
+jsonToSend.beneficiaires[0].date_naissance = dateFormatee || "";
+jsonToSend.beneficiaires[0].code_postal = resultats.zip || "";
+jsonToSend.contrat.type_projet = resultats.type_projet || "";
+jsonToSend.prets[0].taux_pret = resultats.range_taux || "";
+
+// Gérer les valeurs booléennes éventuellement non définies
+jsonToSend.beneficiaires[0].risque_fumeur = resultats["Is-Fumeur-Oui"] === "on" ? "fumeur" : "non_fumeur";
+jsonToSend.beneficiaires[0].risque_port_charges = getRisquePortCharges(resultats);
+jsonToSend.beneficiaires[0].risque_travail_hauteur = getRisqueTravailHauteur(resultats);
+jsonToSend.beneficiaires[0].statut_professionnel = resultats.profession1 || "";
+jsonToSend.beneficiaires[0].risque_km_pro = resultats["risque_km_pro-oui-2"] === "on" ? "sup_20000" : "inf_20000";
+
+// Gérer le co-emprunteur si présent
+if (resultats["co-emprunteur-oui"] === "on") {
+    jsonToSend = gererCoEmprunteur(jsonToSend, resultats);
+}
+
+// Fonction pour obtenir le risque de port de charges en fonction des résultats
+function getRisquePortCharges(resultats) {
+    if (resultats["risque_port_charges-15kg"] === "on") {
+        return "inf_15kg";
+    } else if (resultats["risque_port_charges-non"] === "on") {
+        return "aucun";
+    } else if (resultats["risque_port_charges-plus15kg"] === "on") {
+        return "sup_15kg";
+    }
+}
+
+// Fonction pour obtenir le risque de travail en hauteur en fonction des résultats
+function getRisqueTravailHauteur(resultats) {
+    if (resultats["risque_travail_hauteur-15m"] === "on") {
+        return "inf_15m";
+    } else if (resultats["risque_travail_hauteur-non"] === "on") {
+        return "aucun";
+    } else if (resultats["risque_travail_hauteur-plus15m"] === "on") {
+        return "sup_15m";
+    } else {
+        return "non_defini";
+    }
+}
+
+// Fonction pour gérer les données du co-emprunteur
+function gererCoEmprunteur(jsonToSend, resultats) {
+    jsonToSend.beneficiaires.push({
+        rang_beneficiaire: "2",
+        role: "co_assure",
+        type_assure: "emprunteur",
+        date_naissance: "1999-05-04",
+        code_postal: "69008",
+        statut_professionnel: "salarie",
+        risque_km_pro: "aucun",
+        risque_travail_hauteur: "inf_15m",
+        risque_port_charges: "sup_15kg",
+        risque_fumeur: "non_fumeur",
+        risque_ppe: "aucun",
+        encours_inf_200000: "sup_200000",
+        frais_courtage: "0",
+    });
+
+    jsonToSend.garanties.push({
+        rang_beneficiaire: "2",
+        quotite: "80",
+        package_garanties: "DC-IPT-MNO",
+        franchise: "90",
+    });
+
+    var dateOrigineCoEmprunteur = resultats["Date-Naissanceco-emprunteur-se"] || "";
+    var dateFormateeCoEmprunteur = moment(dateOrigineCoEmprunteur, "DD-MM-YYYY").format("YYYY-MM-DD") || "";
+
+    jsonToSend.beneficiaires[1].date_naissance = dateFormateeCoEmprunteur || "";
+    jsonToSend.beneficiaires[1].code_postal = resultats["Zipco-emprunteur"] || "";
+    jsonToSend.beneficiaires[1].statut_professionnel = resultats["Profession-2co-emprunteur-se-2"] || "";
+    jsonToSend.beneficiaires[1].risque_fumeur = resultats["Is-Fumeur-Oui-2co-emprunteur-se"] === "on" ? "fumeur" : "non_fumeur";
+    jsonToSend.beneficiaires[1].risque_port_charges = getRisquePortChargesCoEmprunteur(resultats);
+    jsonToSend.beneficiaires[1].risque_travail_hauteur = getRisqueTravailHauteurCoEmprunteur(resultats);
+    jsonToSend.beneficiaires[1].risque_km_pro = resultats["Risque-Km-Pro-Oui-2co-emprunteur-se"] === "on" ? "sup_20000" : "inf_20000";
+    jsonToSend.garanties[1].quotite = resultats["co-emprunteur-oui"] === "on" ? "50" : "100";
+
+    return jsonToSend;
+}
+
+// Fonction pour obtenir le risque de port de charges du co-emprunteur en fonction des résultats
+function getRisquePortChargesCoEmprunteur(resultats) {
+    if (resultats["Risque-Port-Charges-15-Kg-2co-emprunteur-se"] === "on") {
+        return "inf_15kg";
+    } else if (resultats["Risque-Port-Charges-Non-2co-emprunteur-se"] === "on") {
+        return "aucun";
+    } else if (resultats["Risque-Port-Charges-Plus-15-Kg-2co-emprunteur-se"] === "on") {
+        return "sup_15kg";
+    }
+}
+
+// Fonction pour obtenir le risque de travail en hauteur du co-emprunteur en fonction des résultats
+function getRisqueTravailHauteurCoEmprunteur(resultats) {
+    if (resultats["Risque-Travail-Hauteur-15-M-2co-emprunteur-se"] === "on") {
+        return "inf_15m";
+    } else if (resultats["Risque-Travail-Hauteur-Non-2co-emprunteur-se"] === "on") {
+        return "aucun";
+    } else if (resultats["Risque-Travail-Hauteur-Plus-15-M-2co-emprunteur-se"] === "on") {
+        return "sup_15m";
+    } else {
+        return "non_defini";
+    }
+}
+
+function calculerProbabilite(pourcentageCreditRevenu) {
+  if (pourcentageCreditRevenu >= 45) {
+    return 0; // Peu probable
+  } else if (pourcentageCreditRevenu >= 35 && pourcentageCreditRevenu < 45) {
+    return 0.3; // 30% de probabilité que le dossier passe
+  } else if (pourcentageCreditRevenu >= 25 && pourcentageCreditRevenu < 35) {
+    return 0.5; // 50% de probabilité que le dossier passe
+  } else if (pourcentageCreditRevenu >= 0 && pourcentageCreditRevenu < 25) {
+    return 0.7; // 70% de probabilité que le dossier passe
+  } else {
+    return -1; // Code d'erreur pour une valeur invalide
+  }
+}
   var script = document.createElement("script");
   script.src =
     "https://cdn.jsdelivr.net/npm/@finsweet/attributes-numbercount@1/numbercount.js";
