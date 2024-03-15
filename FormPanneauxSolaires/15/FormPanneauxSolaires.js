@@ -297,7 +297,7 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString) {
   var jsonToSend = {};
   console.log(jsonToSend);
 
-  $("#Economie-par-mois").attr(
+  $("#Economie-globale").attr(
     "fs-numbercount-end",
     parseFloat(pourcentageCreditRevenu).toFixed(2)
   );
