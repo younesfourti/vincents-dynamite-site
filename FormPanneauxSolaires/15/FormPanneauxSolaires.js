@@ -296,17 +296,30 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString) {
   //console.log(resultats);
   var jsonToSend = {};
   console.log(jsonToSend);
-
+  function calculerProbabilite(pourcentageCreditRevenu) {
+    if (pourcentageCreditRevenu >= 45) {
+      return 0; // Peu probable
+    } else if (pourcentageCreditRevenu >= 35 && pourcentageCreditRevenu < 45) {
+      return 0.3; // 30% de probabilité que le dossier passe
+    } else if (pourcentageCreditRevenu >= 25 && pourcentageCreditRevenu < 35) {
+      return 0.5; // 50% de probabilité que le dossier passe
+    } else if (pourcentageCreditRevenu >= 0 && pourcentageCreditRevenu < 25) {
+      return 0.7; // 70% de probabilité que le dossier passe
+    } else {
+      return -1; // Code d'erreur pour une valeur invalide
+    }
+  }
+  var Probabilite = calculerProbabilite(pourcentageCreditRevenu)
   $("#Economie-globale").attr(
     "fs-numbercount-end",
-    parseFloat(pourcentageCreditRevenu).toFixed(2)
+    parseFloat(Probabilite*100).toFixed(2)
   );
   var script = document.createElement("script");
   script.src =
       "https://cdn.jsdelivr.net/npm/@finsweet/attributes-numbercount@1/numbercount.js";
   script.defer = !0;
   document.head.appendChild(script);
-  
+
   jsonToSend.resultatform = resultats;
   jsonToSend.creditform = JSON.parse(jsonString);
   var make = {
