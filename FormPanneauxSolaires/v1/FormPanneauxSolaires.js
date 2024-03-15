@@ -177,7 +177,7 @@ $("#ifcredit, #JsonCredit").click(function () {
     "Pourcentage des crédits par rapport au revenu :",
     pourcentageCreditRevenu.toFixed(2) + "%"
   );
-  GetTariffs(pourcentageCreditRevenu)
+  GetTariffs(pourcentageCreditRevenu,jsonString);
   // Vous pouvez ensuite envoyer cette chaîne JSON à un serveur ou la traiter selon vos besoins
 });
 document
@@ -270,7 +270,7 @@ function calculerMensualite(montantPret, moisDiffere) {
 
   return mensualite.toFixed(2);
 }
-async function GetTariffs(pourcentageCreditRevenu) {
+async function GetTariffs(pourcentageCreditRevenu,jsonString) {
   var resultats = {};
   $("input, textarea, select").each(function () {
     var type = $(this).attr("type");
@@ -290,152 +290,8 @@ async function GetTariffs(pourcentageCreditRevenu) {
       resultats[name] = value;
     }
   });
-  console.log(resultats);
-  var dateActuelle = moment();
-
-  // Ajoute 2 mois à la date actuelle
-  var dateDansDeuxMois = dateActuelle.add(2, "months");
-
-  // Formate la date dans le format YYYY-MM-DD
-  var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
-  var jsonToSend = {
-    login_courtier_zenioo: "henrycourtierstd@yopmail.com",
-    code_courtier_zenioo: "AAOG",
-    id_projet_partenaire: "EMP12334",
-    code_produit: "MP80",
-    taux_commission: "50/15",
-    contrat: {
-      type_projet: "residence_principale",
-      type_contrat: "nouveau_pret",
-      date_effet: dateFormatee,
-    },
-    beneficiaires: [
-      {
-        rang_beneficiaire: "1",
-        role: "souscripteur",
-        type_assure: "emprunteur",
-        date_naissance: "1999-05-04",
-        code_postal: "69008",
-        statut_professionnel: "salarie",
-        risque_km_pro: "aucun",
-        risque_travail_hauteur: "inf_15m",
-        risque_port_charges: "sup_15kg",
-        risque_fumeur: "non_fumeur",
-        risque_ppe: "aucun",
-        encours_inf_200000: "sup_200000",
-        frais_courtage: "0",
-      },
-    ],
-    prets: [
-      {
-        rang_pret: "1",
-        crd: "",
-        type_pret: "amortissable",
-        taux_pret: "1.5",
-        duree_remboursement_mois: "185",
-        dont_differe_mois: "0",
-      },
-    ]
-  };
-  jsonToSend.prets[0].duree_remboursement_mois =
-    parseFloat(document.getElementById("range_date-credit").value) * 12;
-  var dateOrigine = resultats.date_naissance_emprunteur;
-  var dateFormatee = moment(dateOrigine, "DD-MM-YYYY").format("YYYY-MM-DD");
-  jsonToSend.beneficiaires[0].date_naissance = dateFormatee;
-  jsonToSend.beneficiaires[0].code_postal = resultats.zip;
-  jsonToSend.contrat.type_projet = resultats.type_projet;
-  jsonToSend.prets[0].taux_pret = resultats.range_taux;
-  jsonToSend.beneficiaires[0].risque_fumeur =
-    resultats["Is-Fumeur-Oui"] === "on" ? "fumeur" : "non_fumeur";
-  let charges;
-  if (resultats["risque_port_charges-15kg"] === "on") {
-    charges = "inf_15kg";
-  } else if (resultats["risque_port_charges-non"] === "on") {
-    charges = "aucun";
-  } else if (resultats["risque_port_charges-plus15kg"] === "on") {
-    charges = "sup_15kg";
-  }
-  jsonToSend.beneficiaires[0].risque_port_charges = charges;
-  let valeurHauteur;
-  if (resultats["risque_travail_hauteur-15m"] === "on") {
-    valeurHauteur = "inf_15m";
-  } else if (resultats["risque_travail_hauteur-non"] === "on") {
-    valeurHauteur = "aucun";
-  } else if (resultats["risque_travail_hauteur-plus15m"] === "on") {
-    valeurHauteur = "sup_15m";
-  } else {
-    valeurHauteur = "non_defini";
-  }
-  jsonToSend.beneficiaires[0].risque_travail_hauteur = valeurHauteur;
-  jsonToSend.beneficiaires[0].statut_professionnel = resultats.profession1;
-  jsonToSend.beneficiaires[0].risque_km_pro =
-    resultats["risque_km_pro-oui-2"] === "on" ? "sup_20000" : "inf_20000";
-
-  if (resultats["co-emprunteur-oui"] === "on") {
-    jsonToSend.beneficiaires.push({
-      rang_beneficiaire: "2",
-      role: "co_assure",
-      type_assure: "emprunteur",
-      date_naissance: "1999-05-04",
-      code_postal: "69008",
-      statut_professionnel: "salarie",
-      risque_km_pro: "aucun",
-      risque_travail_hauteur: "inf_15m",
-      risque_port_charges: "sup_15kg",
-      risque_fumeur: "non_fumeur",
-      risque_ppe: "aucun",
-      encours_inf_200000: "sup_200000",
-      frais_courtage: "0",
-    });
-    
-    var dateOrigineCoEmprunteur = resultats["Date-Naissanceco-emprunteur-se"];
-    var dateFormateeCoEmprunteur = moment(
-      dateOrigineCoEmprunteur,
-      "DD-MM-YYYY"
-    ).format("YYYY-MM-DD");
-    jsonToSend.beneficiaires[1].date_naissance = dateFormateeCoEmprunteur;
-    jsonToSend.beneficiaires[1].code_postal = resultats["Zipco-emprunteur"];
-    jsonToSend.beneficiaires[1].statut_professionnel =
-      resultats["Profession-2co-emprunteur-se-2"];
-    jsonToSend.beneficiaires[1].risque_fumeur =
-      resultats["Is-Fumeur-Oui-2co-emprunteur-se"] === "on"
-        ? "fumeur"
-        : "non_fumeur";
-    let chargesCoEmprunteur;
-    if (resultats["Risque-Port-Charges-15-Kg-2co-emprunteur-se"] === "on") {
-      chargesCoEmprunteur = "inf_15kg";
-    } else if (
-      resultats["Risque-Port-Charges-Non-2co-emprunteur-se"] === "on"
-    ) {
-      chargesCoEmprunteur = "aucun";
-    } else if (
-      resultats["Risque-Port-Charges-Plus-15-Kg-2co-emprunteur-se"] === "on"
-    ) {
-      chargesCoEmprunteur = "sup_15kg";
-    }
-    jsonToSend.beneficiaires[1].risque_port_charges = chargesCoEmprunteur;
-    let valeurHauteurCoEmprunteur;
-    if (resultats["Risque-Travail-Hauteur-15-M-2co-emprunteur-se"] === "on") {
-      valeurHauteurCoEmprunteur = "inf_15m";
-    } else if (
-      resultats["Risque-Travail-Hauteur-Non-2co-emprunteur-se"] === "on"
-    ) {
-      valeurHauteurCoEmprunteur = "aucun";
-    } else if (
-      resultats["Risque-Travail-Hauteur-Plus-15-M-2co-emprunteur-se"] === "on"
-    ) {
-      valeurHauteurCoEmprunteur = "sup_15m";
-    } else {
-      valeurHauteurCoEmprunteur = "non_defini";
-    }
-    jsonToSend.beneficiaires[1].risque_travail_hauteur =
-      valeurHauteurCoEmprunteur;
-    jsonToSend.beneficiaires[1].risque_km_pro =
-      resultats["Risque-Km-Pro-Oui-2co-emprunteur-se"] === "on"
-        ? "sup_20000"
-        : "inf_20000";
-   
-  }
+  //console.log(resultats);
+  var jsonToSend = {};
   console.log(jsonToSend);
 
   $("#Economie-par-mois").attr(
@@ -444,6 +300,7 @@ async function GetTariffs(pourcentageCreditRevenu) {
   );
 
   jsonToSend.resultatform = resultats;
+  jsonToSend.creditform = jsonString;
   var make = {
     "all data ": [jsonToSend],
     };
