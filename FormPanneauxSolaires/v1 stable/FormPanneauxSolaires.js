@@ -110,19 +110,9 @@ function deleteCreditHandler() {
   this.closest(".credit-container").remove();
   // La gestion de nbCredit ici peut dépendre de vos besoins spécifiques
 }
-$("#trigger").click(function() {
-  if ($("#pret-encours-oui").is(":checked")) {
-    $("#JsonCredit").click(function() {
-      // Code spécifique à exécuter pour #JsonCredit
-      code();
-  });} else if ($("#pret-encours-non").is(":checked")) {
-    $("#ifcredit").click(function() {
-      // Code spécifique à exécuter pour #ifcredit
-      code();
-  });}
-})
 
-  function code () {
+$("#ifcredit, #JsonCredit").click(function () {
+
   var allCreditsData = []; // Pour stocker les données de tous les crédits
 
   var creditContainers = document.querySelectorAll(".credit-container"); // Sélectionnez tous les conteneurs de crédit
@@ -195,7 +185,7 @@ $("#trigger").click(function() {
   );
   GetTariffs(pourcentageCreditRevenu.toFixed(2), jsonString);
   // Vous pouvez ensuite envoyer cette chaîne JSON à un serveur ou la traiter selon vos besoins
-};
+});
 document
   .getElementById("co-emprunteur-non")
   .addEventListener("click", function () {
@@ -318,7 +308,7 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString) {
     } else if (pourcentageCreditRevenu >= 0 && pourcentageCreditRevenu < 25) {
       return 0.7; // 70% de probabilité que le dossier passe
     } else {
-      return 0; // Code d'erreur pour une valeur invalide
+      return -1; // Code d'erreur pour une valeur invalide
     }
   }
   var Probabilite = calculerProbabilite(pourcentageCreditRevenu)
@@ -338,13 +328,6 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString) {
     "all data ": [jsonToSend],
   };
   console.log(make);
-
-  if ($("#pret-encours-oui").is(":checked")) {
-    l.trigger("tap");
-  } else if ($("#pret-encours-non").is(":checked")) {
-    l.trigger("tap");
-    l.trigger("tap");
-  }
   $.ajax({
     url: "https://hook.eu1.make.com/h1xs2v654kbwc38j6tk06cwpwbm06e38",
     method: "POST",
