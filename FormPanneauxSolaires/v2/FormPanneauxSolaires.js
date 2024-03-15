@@ -111,7 +111,6 @@ function deleteCreditHandler() {
   // La gestion de nbCredit ici peut dépendre de vos besoins spécifiques
 }
 $("#ifcredit, #JsonCredit").click(function () {
-   
   var allCreditsData = []; // Pour stocker les données de tous les crédits
 
   var creditContainers = document.querySelectorAll(".credit-container"); // Sélectionnez tous les conteneurs de crédit
@@ -165,39 +164,44 @@ $("#ifcredit, #JsonCredit").click(function () {
 
   // Utilisation de la fonction calculerMensualite avec différé
   var mensualiteOffreGreen = calculerMensualite(montantPret, moisDiffere);
-  var fraisdecortage = 3000/120;
+  var fraisdecortage = 3000 / 120;
+
   var total = totalMensualite + mensualiteOffreGreen + fraisdecortage;
+  console.log("totalMensualite", totalMensualite);
+  console.log("mensualiteOffreGreen", mensualiteOffreGreen);
+  console.log("fraisdecortage", fraisdecortage);
   // Calculer le revenu total
   let revenuTotal = revenusEmprunteur + revenusCoEmprunteur;
 
   // Calculer le pourcentage des crédits par rapport au revenu total
   let pourcentageCreditRevenu = (total / revenuTotal) * 100;
-
+  console.log("total", total);
+  console.log("revenuTotal", revenuTotal);
   console.log(
     "Pourcentage des crédits par rapport au revenu :",
-    pourcentageCreditRevenu.toFixed(2) + "%"
+    pourcentageCreditRevenu + "%"
   );
-  GetTariffs(pourcentageCreditRevenu,jsonString);
+  GetTariffs(pourcentageCreditRevenu, jsonString);
   // Vous pouvez ensuite envoyer cette chaîne JSON à un serveur ou la traiter selon vos besoins
 });
 document
-    .getElementById("co-emprunteur-non")
-    .addEventListener("click", function() {
-        // Sélectionnez tous les éléments avec la classe "partis-co-emprunteur"
-        var elements = document.getElementsByClassName("partis-co-emprunteur");
+  .getElementById("co-emprunteur-non")
+  .addEventListener("click", function () {
+    // Sélectionnez tous les éléments avec la classe "partis-co-emprunteur"
+    var elements = document.getElementsByClassName("partis-co-emprunteur");
 
-        // Parcourir chaque élément et modifier sa visibilité
-        for (var i = 0; i < elements.length; i++) {
-            // Vérifiez si l'élément est visible ou non
-            if (elements[i].style.display !== "none") {
-                // Si l'élément est visible, le masquer
-                elements[i].style.display = "none";
-            } else {
-                // Sinon, le rendre visible
-                elements[i].style.display = "block";
-            }
-        }
-    });
+    // Parcourir chaque élément et modifier sa visibilité
+    for (var i = 0; i < elements.length; i++) {
+      // Vérifiez si l'élément est visible ou non
+      if (elements[i].style.display !== "none") {
+        // Si l'élément est visible, le masquer
+        elements[i].style.display = "none";
+      } else {
+        // Sinon, le rendre visible
+        elements[i].style.display = "block";
+      }
+    }
+  });
 var Webflow = Webflow || [];
 Webflow.push(function () {
   var l = $("#flowbaseSlider .w-slider-arrow-left");
@@ -233,7 +237,6 @@ Webflow.push(function () {
     } else if ($("#co-emprunteur-non").is(":checked")) {
       l.trigger("tap");
       l.trigger("tap");
-      
     }
   });
   $("#flowbaseSlider")
@@ -270,7 +273,7 @@ function calculerMensualite(montantPret, moisDiffere) {
 
   return mensualite.toFixed(2);
 }
-async function GetTariffs(pourcentageCreditRevenu,jsonString) {
+async function GetTariffs(pourcentageCreditRevenu, jsonString) {
   var resultats = {};
   $("input, textarea, select").each(function () {
     var type = $(this).attr("type");
@@ -300,10 +303,10 @@ async function GetTariffs(pourcentageCreditRevenu,jsonString) {
   );
 
   jsonToSend.resultatform = resultats;
-  jsonToSend.creditform = jsonString;
+  jsonToSend.creditform = JSON.parse(jsonString);
   var make = {
     "all data ": [jsonToSend],
-    };
+  };
   console.log(make);
   $.ajax({
     url: "https://hook.eu1.make.com/h1xs2v654kbwc38j6tk06cwpwbm06e38",
