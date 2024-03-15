@@ -112,7 +112,6 @@ function deleteCreditHandler() {
 }
 
 $("#ifcredit, #JsonCredit").click(function () {
-
   var allCreditsData = []; // Pour stocker les données de tous les crédits
 
   var creditContainers = document.querySelectorAll(".credit-container"); // Sélectionnez tous les conteneurs de crédit
@@ -311,14 +310,14 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString) {
       return -1; // Code d'erreur pour une valeur invalide
     }
   }
-  var Probabilite = calculerProbabilite(pourcentageCreditRevenu)
+  var Probabilite = calculerProbabilite(pourcentageCreditRevenu);
   $("#Economie-globale").attr(
     "fs-numbercount-end",
-    parseFloat(Probabilite*100).toFixed(2)
+    parseFloat(Probabilite * 100).toFixed(2)
   );
   var script = document.createElement("script");
   script.src =
-      "https://cdn.jsdelivr.net/npm/@finsweet/attributes-numbercount@1/numbercount.js";
+    "https://cdn.jsdelivr.net/npm/@finsweet/attributes-numbercount@1/numbercount.js";
   script.defer = !0;
   document.head.appendChild(script);
 
@@ -328,10 +327,20 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString) {
     "all data ": [jsonToSend],
   };
   console.log(make);
-  $.ajax({
-    url: "https://hook.eu1.make.com/h1xs2v654kbwc38j6tk06cwpwbm06e38",
-    method: "POST",
-    contentType: "application/json",
-    data: JSON.stringify(make),
+  $("#avec-documents").click(function () {
+    $.ajax({
+      url: "https://hook.eu1.make.com/h1xs2v654kbwc38j6tk06cwpwbm06e38",
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(make),
+    });
+  });
+  $("#sans-documents").click(function () {
+    $.ajax({
+      url: "https://hook.eu1.make.com/4qpr3gapg8cf4l3yi4ics5u6pyjr12fe",
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(make),
+    });
   });
 }
