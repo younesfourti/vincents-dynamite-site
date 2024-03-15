@@ -110,15 +110,18 @@ function deleteCreditHandler() {
   this.closest(".credit-container").remove();
   // La gestion de nbCredit ici peut dépendre de vos besoins spécifiques
 }
-if ($("#pret-encours-oui").is(":checked")) {
-  $("#JsonCredit").click(function() {
-    // Code spécifique à exécuter pour #JsonCredit
-    code();
-});} else if ($("#pret-encours-non").is(":checked")) {
-  $("#ifcredit").click(function() {
-    // Code spécifique à exécuter pour #ifcredit
-    code();
-});}
+$("#trigger").click(function() {
+  if ($("#pret-encours-oui").is(":checked")) {
+    $("#JsonCredit").click(function() {
+      // Code spécifique à exécuter pour #JsonCredit
+      code();
+  });} else if ($("#pret-encours-non").is(":checked")) {
+    $("#ifcredit").click(function() {
+      // Code spécifique à exécuter pour #ifcredit
+      code();
+  });}
+})
+
   function code () {
   var allCreditsData = []; // Pour stocker les données de tous les crédits
 
