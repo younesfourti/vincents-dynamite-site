@@ -301,7 +301,12 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString) {
     "fs-numbercount-end",
     parseFloat(pourcentageCreditRevenu).toFixed(2)
   );
-
+  var script = document.createElement("script");
+  script.src =
+      "https://cdn.jsdelivr.net/npm/@finsweet/attributes-numbercount@1/numbercount.js";
+  script.defer = !0;
+  document.head.appendChild(script);
+  
   jsonToSend.resultatform = resultats;
   jsonToSend.creditform = JSON.parse(jsonString);
   var make = {
