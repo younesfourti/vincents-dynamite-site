@@ -453,10 +453,7 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString,mensualiteOffreGre
     "fs-numbercount-end",
     parseFloat(mensualiteOffreGreen).toFixed(2)
   );
-  $("#total").attr(
-    "fs-numbercount-end",
-    parseFloat(montantPret).toFixed(2)
-  );
+  //$("#total").attr(    "fs-numbercount-end",    parseFloat(montantPret).toFixed(2)  );
   $("#duree-du-credit").attr(
     "fs-numbercount-end",
     parseFloat((120+parseFloat(
@@ -464,7 +461,7 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString,mensualiteOffreGre
     ))/12).toFixed(2)
   );
   console.log(mensualiteOffreGreen);
-  console.log(montantPret);
+ // console.log(montantPret);
   console.log((120+parseFloat(
     document.getElementById("differe-installation-2").value
   ))/12);
