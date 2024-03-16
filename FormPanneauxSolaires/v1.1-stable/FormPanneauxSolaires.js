@@ -197,7 +197,7 @@ $("#ifcredit, #JsonCredit").click(function () {
     "Pourcentage des crédits par rapport au revenu :",
     pourcentageCreditRevenu.toFixed(2) + "%"
   );
-  GetTariffs(pourcentageCreditRevenu.toFixed(2), jsonString);
+  GetTariffs(pourcentageCreditRevenu.toFixed(2), jsonString,mensualiteOffreGreen);
   // Vous pouvez ensuite envoyer cette chaîne JSON à un serveur ou la traiter selon vos besoins
 });
 
@@ -373,7 +373,7 @@ function calculerMensualite(montantPret, moisDiffere) {
 
   return mensualiteAvecExtras;
 }
-async function GetTariffs(pourcentageCreditRevenu, jsonString) {
+async function GetTariffs(pourcentageCreditRevenu, jsonString,mensualiteOffreGreen) {
   var resultats = {};
   $("input, textarea, select").each(function () {
     var type = $(this).attr("type");
