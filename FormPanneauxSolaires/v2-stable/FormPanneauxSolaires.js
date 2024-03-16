@@ -38,8 +38,6 @@ document.getElementById("Zipco-emprunteur").addEventListener("blur", () => {
 $(document).ready(function () {
   $('[data-toggle="datepicker"]').datepicker({
     format: "DD-MM-YYYY",
-    startDate: "1960",
-    endDate: "2006",
   });
   if (window.innerWidth < 768) {
     $('[data-toggle="datepicker"]').attr("readonly", "readonly");
@@ -48,7 +46,6 @@ $(document).ready(function () {
 $(document).ready(function () {
   $('[data-toggle="datepicker2"]').datepicker({
     format: "DD-MM-YYYY",
-    startDate: "2009",
   });
   if (window.innerWidth < 768) {
     $('[data-toggle="datepicker"]').attr("readonly", "readonly");
@@ -103,6 +100,15 @@ document
     if (deleteButton) {
       deleteButton.addEventListener("click", deleteCreditHandler);
     }
+
+    $(document).ready(function () {
+      $('[data-toggle="datepicker2"]').datepicker({
+        format: "DD-MM-YYYY",
+      });
+      if (window.innerWidth < 768) {
+        $('[data-toggle="datepicker"]').attr("readonly", "readonly");
+      }
+    });
   });
 
 // Fonction gestionnaire pour la suppression d'un crédit
@@ -141,6 +147,18 @@ $("#ifcredit, #JsonCredit").click(function () {
   let totalMensualite = 0;
 
   credits.forEach((credit, index) => {
+    // Construit la clé pour accéder au type de projet en prenant en compte que le premier crédit n'a pas de suffixe
+    let typeProjetKey = `Type-Projet${
+      index === 0 ? "" : "credit-" + (index + 1)
+    }`;
+    
+    // Vérifie si le type de projet est "residence_principale"
+    if (credit[typeProjetKey] === "residence_principale") {
+        // Appelle la fonction pour calculer le capital restant dû et l'assigne à la propriété appropriée
+        credit.residence_principale = calculerCapitalRestantDu(credit,index);
+        jsonString = JSON.stringify(credits, null, 2);
+    }
+
     // Construit la clé pour accéder à la mensualité en prenant en compte que le premier crédit n'a pas de suffixe
     let mensualiteKey = `Mensualit${
       index === 0 ? "" : "credit-" + (index + 1)
@@ -165,12 +183,9 @@ $("#ifcredit, #JsonCredit").click(function () {
 
   // Utilisation de la fonction calculerMensualite avec différé
   var mensualiteOffreGreen = calculerMensualite(montantPret, moisDiffere);
-  var fraisdecortage = 3000 / 120;
-
-  var total = totalMensualite + mensualiteOffreGreen + fraisdecortage;
+  var total = totalMensualite + mensualiteOffreGreen;
   console.log("totalMensualite", totalMensualite);
   console.log("mensualiteOffreGreen", mensualiteOffreGreen);
-  console.log("fraisdecortage", fraisdecortage);
   // Calculer le revenu total
   let revenuTotal = revenusEmprunteur + revenusCoEmprunteur;
 
@@ -185,6 +200,68 @@ $("#ifcredit, #JsonCredit").click(function () {
   GetTariffs(pourcentageCreditRevenu.toFixed(2), jsonString);
   // Vous pouvez ensuite envoyer cette chaîne JSON à un serveur ou la traiter selon vos besoins
 });
+
+function calculerCapitalRestantDu(credit, index) {
+  // Construire les clés pour accéder aux différentes propriétés
+  let montantPretKey = `Montant-du-pr-t${index !== 0 ? "credit-" + (index + 1) : ""}`;
+  let tauxInteretKey = `Taux-du-pr-t${index !== 0 ? "credit-" + (index + 1) : ""}`;
+  let mensualiteKey = `Mensualit${index !== 0 ? "credit-" + (index + 1) : ""}`;
+  let dureePretMoisKey = `Dur-e-totale-mois${index !== 0 ? "credit-" + (index + 1) : ""}`;
+  let differeRemboursementMoisKey = `Dont-diff-r-mois${index !== 0 ? "credit-" + (index + 1) : ""}`;
+
+  // Extraire les valeurs des propriétés correspondantes
+  let montantPret = Number(credit[montantPretKey]);
+  let tauxInteret = Number(credit[tauxInteretKey]);
+  let mensualite = Number(credit[mensualiteKey]);
+  let dureePretMois = Number(credit[dureePretMoisKey]);
+  let differeRemboursementMois = Number(credit[differeRemboursementMoisKey]);
+
+  // Convertir le taux d'intérêt annuel en taux mensuel (en décimale)
+  var tauxInteretMensuel = tauxInteret / 100 / 12;
+
+  // Analyser la date de début du prêt depuis la chaîne de date
+  var dateDebutPret = moment(dateString, "DD-MM-YYYY").toDate(); // Convert to Date object
+
+  // Récupérer la date actuelle
+  var dateActuelle = new Date();
+
+  // Calculer le nombre de mois écoulés depuis le début du prêt, en tenant compte du différé de remboursement
+  var differenceMois =
+      (dateActuelle.getFullYear() - dateDebutPret.getFullYear()) * 12 +
+      (dateActuelle.getMonth() - dateDebutPret.getMonth());
+  differenceMois -= differeRemboursementMois;
+  differenceMois = Math.max(0, differenceMois);
+
+  // Calculer la mensualité (formule 2)
+  var Newmensualite =
+      (montantPret * tauxInteretMensuel) /
+      (1 - Math.pow(1 + tauxInteretMensuel, -dureePretMois));
+var assurence = mensualite-Newmensualite ;
+  // Calculer le capital restant dû (formule 1)
+  var capitalRestantDu =
+      (Newmensualite *
+          (1 - Math.pow(1 + tauxInteretMensuel, -(dureePretMois - differenceMois)))) /
+      tauxInteretMensuel;
+
+  // Arrondir à 2 décimales
+  var crd = capitalRestantDu.toFixed(2);
+
+  // Retourner les paramètres calculés ainsi que la mensualité
+  return {
+    mensualitesansassurence: Newmensualite,
+    assurence:assurence,
+    mensualite:mensualite,
+    capitalRestantDu: crd,
+    RestantMois: dureePretMois - differenceMois,
+    montantPret: montantPret,
+    tauxInteret: tauxInteret,
+    dureePretMois: dureePretMois,
+    differeRemboursementMois: differeRemboursementMois
+  };
+}
+
+
+
 document
   .getElementById("co-emprunteur-non")
   .addEventListener("click", function () {
@@ -262,17 +339,39 @@ function calculerMensualite(montantPret, moisDiffere) {
   var tauxInteretAnnuel = 6.29;
   var dureePretMois = 120; // Équivalent de 10 ans
   // Ajuster la durée du prêt en fonction du différé
-  var dureeEffectivePretMois = dureePretMois + moisDiffere;
+  var dureeEffectivePretMois = dureePretMois;
+  
+  // Frais de courtage par mois
+  var fraisCourtageParMois = 3000 / 12;
+  
+  // Montant de l'assurance par mois
+  var montantAssuranceParMois = 1.50;
 
   // Convertir le taux d'intérêt annuel en taux mensuel (en décimal)
   var tauxInteretMensuel = tauxInteretAnnuel / 100 / 12;
 
-  // Calculer la mensualité
-  var mensualite =
+  // Calculer la mensualité sans tenir compte de l'assurance et des frais de courtage
+  var mensualiteBase =
     (montantPret * tauxInteretMensuel) /
     (1 - Math.pow(1 + tauxInteretMensuel, -dureeEffectivePretMois));
 
-  return mensualite;
+  // Calculer le montant du prêt total en ajoutant les mois de différé
+  var montantTotal = montantPret;
+
+  // Si des mois de différé sont spécifiés, ajuster le montant total du prêt en fonction
+  if (moisDiffere > 0) {
+    montantTotal += mensualiteBase * moisDiffere;
+  }
+
+  // Recalculer la mensualité en tenant compte du montant total du prêt et sans les extras
+  var mensualiteSansExtras =
+    (montantTotal * tauxInteretMensuel) /
+    (1 - Math.pow(1 + tauxInteretMensuel, -dureeEffectivePretMois));
+
+  // Ajouter les extras (assurance et frais de courtage) à la mensualité recalculée
+  var mensualiteAvecExtras = mensualiteSansExtras + montantAssuranceParMois + fraisCourtageParMois;
+
+  return mensualiteAvecExtras;
 }
 async function GetTariffs(pourcentageCreditRevenu, jsonString) {
   var resultats = {};
@@ -344,6 +443,31 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString) {
     "fs-numbercount-end",
     parseFloat(Probabilite * 100).toFixed(2)
   );
+  $("#montant-installation").attr(
+    "fs-numbercount-end",
+    parseFloat(
+      document.getElementById("Montant-TTC-de-l-installation").value
+    ).toFixed(2)
+  );
+  $("#mensualite").attr(
+    "fs-numbercount-end",
+    parseFloat(mensualiteOffreGreen).toFixed(2)
+  );
+  $("#total").attr(
+    "fs-numbercount-end",
+    parseFloat(montantPret).toFixed(2)
+  );
+  $("#duree-du-credit").attr(
+    "fs-numbercount-end",
+    parseFloat((120+parseFloat(
+      document.getElementById("differe-installation-2").value
+    ))/12).toFixed(2)
+  );
+  console.log(mensualiteOffreGreen);
+  console.log(montantPret);
+  console.log((120+parseFloat(
+    document.getElementById("differe-installation-2").value
+  ))/12);
 
 
 
