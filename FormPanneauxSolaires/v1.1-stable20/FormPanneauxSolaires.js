@@ -362,6 +362,7 @@ function calculerMensualite(montantPret, moisDiffere) {
   if (moisDiffere > 0) {
     montantTotal += mensualiteBase * moisDiffere;
   }
+  $("#total").attr("fs-numbercount-end",    parseFloat(montantTotal).toFixed(2)  );
 
   // Recalculer la mensualité en tenant compte du montant total du prêt et sans les extras
   var mensualiteSansExtras =
