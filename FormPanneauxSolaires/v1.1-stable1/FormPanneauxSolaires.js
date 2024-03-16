@@ -208,7 +208,7 @@ function calculerCapitalRestantDu(credit, index) {
   let mensualiteKey = `Mensualit${index !== 0 ? "credit-" + (index + 1) : ""}`;
   let dureePretMoisKey = `Dur-e-totale-mois${index !== 0 ? "credit-" + (index + 1) : ""}`;
   let differeRemboursementMoisKey = `Dont-diff-r-mois${index !== 0 ? "credit-" + (index + 1) : ""}`;
-
+let dateString =`date_effet2${index !== 0 ? "credit-" + (index + 1) : ""}`;
   // Extraire les valeurs des propriétés correspondantes
   let montantPret = Number(credit[montantPretKey]);
   let tauxInteret = Number(credit[tauxInteretKey]);
