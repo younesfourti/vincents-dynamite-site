@@ -596,7 +596,7 @@ function calculerProbabilite(pourcentageCreditRevenu) {
   jsonToSend.resultatform = resultats;
   jsonToSend.creditform = JSON.parse(jsonString);
   var make = {
-    "all data ": [jsonToSend],
+    "all data ": [jsonToSend , {"Montant" : mensualiteOffreGreen*120,}],
   };
   console.log(make);
   $("#avec-documents").click(function () {
