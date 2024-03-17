@@ -340,9 +340,9 @@ function calculerMensualite(montantPret, moisDiffere) {
   var dureePretMois = 120; // Équivalent de 10 ans
   // Ajuster la durée du prêt en fonction du différé
   var dureeEffectivePretMois = dureePretMois;
-  
+   var  montantPretavecfrais =    montantPret + 3000
   // Frais de courtage par mois
-  var fraisCourtageParMois = 3000 / 12;
+ 
   
   // Montant de l'assurance par mois
   var montantAssuranceParMois = 1.50;
@@ -352,17 +352,16 @@ function calculerMensualite(montantPret, moisDiffere) {
 
   // Calculer la mensualité sans tenir compte de l'assurance et des frais de courtage
   var mensualiteBase =
-    (montantPret * tauxInteretMensuel) /
+    (montantPretavecfrais * tauxInteretMensuel) /
     (1 - Math.pow(1 + tauxInteretMensuel, -dureeEffectivePretMois));
 
   // Calculer le montant du prêt total en ajoutant les mois de différé
-  var montantTotal = montantPret;
+  var montantTotal = montantPretavecfrais;
 
   // Si des mois de différé sont spécifiés, ajuster le montant total du prêt en fonction
   if (moisDiffere > 0) {
     montantTotal += mensualiteBase * moisDiffere;
   }
-  $("#total").attr("fs-numbercount-end",    parseFloat(montantTotal).toFixed(2)  );
 
   // Recalculer la mensualité en tenant compte du montant total du prêt et sans les extras
   var mensualiteSansExtras =
@@ -370,7 +369,8 @@ function calculerMensualite(montantPret, moisDiffere) {
     (1 - Math.pow(1 + tauxInteretMensuel, -dureeEffectivePretMois));
 
   // Ajouter les extras (assurance et frais de courtage) à la mensualité recalculée
-  var mensualiteAvecExtras = mensualiteSansExtras + montantAssuranceParMois + fraisCourtageParMois;
+  var mensualiteAvecExtras = mensualiteSansExtras + montantAssuranceParMois;
+  $("#total").attr("fs-numbercount-end",    parseFloat(mensualiteAvecExtras*120).toFixed(2)  );
 
   return mensualiteAvecExtras;
 }
@@ -453,13 +453,6 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString,mensualiteOffreGre
   $("#mensualite").attr(
     "fs-numbercount-end",
     parseFloat(mensualiteOffreGreen).toFixed(2)
-  );
-  //$("#total").attr(    "fs-numbercount-end",    parseFloat(montantPret).toFixed(2)  );
-  $("#duree-du-credit").attr(
-    "fs-numbercount-end",
-    parseFloat((120+parseFloat(
-      document.getElementById("differe-installation-2").value
-    ))/12).toFixed(2)
   );
   console.log(mensualiteOffreGreen);
  // console.log(montantPret);
