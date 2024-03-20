@@ -80,12 +80,14 @@ Webflow.push(function() {
             r.trigger("tap");
             r.trigger("tap");
             r.trigger("tap");
+            r.trigger("tap");
         }
     });
     $("#flowbaseSlider").on("click", "#back-co-emprunteur", function(e) {
         if ($("#co-emprunteur-oui").is(":checked")) {
             l.trigger("tap");
         } else if ($("#co-emprunteur-non").is(":checked")) {
+            l.trigger("tap");
             l.trigger("tap");
             l.trigger("tap");
             l.trigger("tap");
@@ -473,7 +475,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
     if (resultats["quotite-50"] === "on") {
         jsonToSend.garanties[0].quotite = "50";
     }
-    if (resultats["quotite-100"] === "on") {
+    if (resultats["quotite-100"] === "on" || resultats["co-emprunteur-non"]) {
         jsonToSend.garanties[0].quotite = "100";
     }
     if (resultats["co-emprunteur-oui"] === "on") {
@@ -494,7 +496,7 @@ var dateFormatee = dateDansDeuxMois.format("YYYY-MM-DD");
         });
         jsonToSend.garanties.push({
             rang_beneficiaire: "2",
-            quotite: "80",
+            quotite: "100",
             package_garanties: "DC-IPT-MNO",
             franchise: "90",
         });
