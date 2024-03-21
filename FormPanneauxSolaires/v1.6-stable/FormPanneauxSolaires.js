@@ -604,6 +604,7 @@ function calculerProbabilite(pourcentageCreditRevenu) {
   };
   console.log(make);
   $("#avec-documents").click(function () {
+    $.ajaxSetup({ cache: false });
     var uniqueParam = new Date().getTime();
     $.ajax({
       url: "https://hook.eu1.make.com/h1xs2v654kbwc38j6tk06cwpwbm06e38"+ uniqueParam,
@@ -613,6 +614,7 @@ function calculerProbabilite(pourcentageCreditRevenu) {
     });
   });
   $("#sans-documents").click(function () {
+    $.ajaxSetup({ cache: false });
     + uniqueParam,
     $.ajax({
       url: "https://hook.eu1.make.com/4qpr3gapg8cf4l3yi4ics5u6pyjr12fe"+ uniqueParam,
