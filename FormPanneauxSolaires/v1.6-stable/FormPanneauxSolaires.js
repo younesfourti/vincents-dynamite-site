@@ -438,9 +438,9 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString,mensualiteOffreGre
 };
 
 if (resultats["co-emprunteur-oui"] === "on") {
-  jsonToSend.garanties[1].quotite = "50";
+  jsonToSend.garanties[0].quotite = "50";
 } else {
-  jsonToSend.garanties[1].quotite = "100";
+  jsonToSend.garanties[0].quotite = "100";
 }
   console.log(jsonToSend);
   var Probabilite = calculerProbabilite(pourcentageCreditRevenu);
