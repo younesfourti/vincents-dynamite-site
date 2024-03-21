@@ -249,7 +249,7 @@ var assurence = mensualite-Newmensualite ;
   // Retourner les paramètres calculés ainsi que la mensualité
   return {
     mensualitesansassurence: Newmensualite,
-    assurence:assurence,
+    assurence:assurence.toFixed(2),
     mensualite:mensualite,
     capitalRestantDu: crd,
     RestantMois: dureePretMois - differenceMois,
