@@ -607,7 +607,7 @@ function calculerProbabilite(pourcentageCreditRevenu) {
     $.ajaxSetup({ cache: false });
     var uniqueParam = new Date().getTime();
     $.ajax({
-      url: "https://hook.eu1.make.com/h1xs2v654kbwc38j6tk06cwpwbm06e38"+ uniqueParam,
+      url: "https://hook.eu1.make.com/h1xs2v654kbwc38j6tk06cwpwbm06e38?"+ uniqueParam,
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify(make),
@@ -615,9 +615,9 @@ function calculerProbabilite(pourcentageCreditRevenu) {
   });
   $("#sans-documents").click(function () {
     $.ajaxSetup({ cache: false });
-    + uniqueParam,
+    var uniqueParam = new Date().getTime();
     $.ajax({
-      url: "https://hook.eu1.make.com/4qpr3gapg8cf4l3yi4ics5u6pyjr12fe"+ uniqueParam,
+      url: "https://hook.eu1.make.com/4qpr3gapg8cf4l3yi4ics5u6pyjr12fe?"+ uniqueParam,
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify(make),
