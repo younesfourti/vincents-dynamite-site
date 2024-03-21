@@ -431,13 +431,17 @@ async function GetTariffs(pourcentageCreditRevenu, jsonString,mensualiteOffreGre
     }, ],
     garanties: [{
         rang_beneficiaire: "1",
-        quotite: "80",
+        quotite: "50",
         package_garanties: "DC-IPT-MNO",
         franchise: "90",
     }, ],
 };
 
-
+if (resultats["co-emprunteur-oui"] === "on") {
+  jsonToSend.garanties[1].quotite = "50";
+} else {
+  jsonToSend.garanties[1].quotite = "100";
+}
   console.log(jsonToSend);
   var Probabilite = calculerProbabilite(pourcentageCreditRevenu);
   $("#Economie-globale").attr(
@@ -530,7 +534,7 @@ function gererCoEmprunteur(jsonToSend, resultats) {
 
     jsonToSend.garanties.push({
         rang_beneficiaire: "2",
-        quotite: "80",
+        quotite: "50",
         package_garanties: "DC-IPT-MNO",
         franchise: "90",
     });
