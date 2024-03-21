@@ -600,16 +600,18 @@ function calculerProbabilite(pourcentageCreditRevenu) {
   };
   console.log(make);
   $("#avec-documents").click(function () {
+    var uniqueParam = new Date().getTime();
     $.ajax({
-      url: "https://hook.eu1.make.com/h1xs2v654kbwc38j6tk06cwpwbm06e38",
+      url: "https://hook.eu1.make.com/h1xs2v654kbwc38j6tk06cwpwbm06e38"+ uniqueParam,
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify(make),
     });
   });
   $("#sans-documents").click(function () {
+    + uniqueParam,
     $.ajax({
-      url: "https://hook.eu1.make.com/4qpr3gapg8cf4l3yi4ics5u6pyjr12fe",
+      url: "https://hook.eu1.make.com/4qpr3gapg8cf4l3yi4ics5u6pyjr12fe"+ uniqueParam,
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify(make),
