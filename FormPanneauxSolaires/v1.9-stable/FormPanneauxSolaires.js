@@ -197,11 +197,21 @@ $("#ifcredit, #JsonCredit").click(function () {
     "Pourcentage des crédits par rapport au revenu :",
     pourcentageCreditRevenu.toFixed(2) + "%"
   );
-  GetTariffs(
-    pourcentageCreditRevenu.toFixed(2),
-    jsonString,
-    mensualiteOffreGreen
-  );
+    var gettarif = false
+  if ($("#pret-encours-non").is(":checked")) {
+    var gettarif = true
+  }
+  if (credits.length>1) {
+    var gettarif = true
+  }
+  if (gettarif) {
+    GetTariffs(
+      pourcentageCreditRevenu.toFixed(2),
+      jsonString,
+      mensualiteOffreGreen
+    );
+  }
+  
   // Vous pouvez ensuite envoyer cette chaîne JSON à un serveur ou la traiter selon vos besoins
 });
 
