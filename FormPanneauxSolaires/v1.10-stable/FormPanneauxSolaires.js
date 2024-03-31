@@ -678,7 +678,11 @@ async function GetTariffs(
   jsonToSend.resultatform = resultats;
   jsonToSend.creditform = JSON.parse(jsonString);
   var make = {
-    "all data ": [jsonToSend, { Montant: mensualiteOffreGreen * 120 }],
+    "all data ": [jsonToSend, { Montant: parseFloat(
+      document.getElementById("Montant-TTC-de-l-installation").value
+    ) + 3000 ,Montantinstalation: parseFloat(
+      document.getElementById("Montant-TTC-de-l-installation").value
+    )  }],
   };
   console.log(make);
   $("#avec-documents").click(function () {
