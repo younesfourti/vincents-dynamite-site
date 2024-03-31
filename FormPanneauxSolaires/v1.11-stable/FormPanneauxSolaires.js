@@ -505,7 +505,7 @@ async function GetTariffs(
       console.log($("#Frais-de-credit"));
       $("#Frais-de-credit").text(
         parseFloat(
-          mensualiteOffreGreen * 120 -
+          3000+
             parseFloat(
               document.getElementById("Montant-TTC-de-l-installation").value
             ).toFixed(2)
@@ -680,7 +680,7 @@ async function GetTariffs(
   var make = {
     "all data ": [jsonToSend, { Montant: parseFloat(
       document.getElementById("Montant-TTC-de-l-installation").value
-    ) + 3000 ,Montantinstalation: parseFloat(
+    ) + 3000 , Montantinstalation: parseFloat(
       document.getElementById("Montant-TTC-de-l-installation").value
     )  }],
   };
