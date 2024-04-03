@@ -506,9 +506,9 @@ async function GetTariffs(
       $("#Frais-de-credit").text(
         parseFloat(
           
-            parseFloat(
-              document.getElementById("Montant-TTC-de-l-installation").value
-            ).toFixed(2) + 3000
+          parseFloat(
+            document.getElementById("Montant-TTC-de-l-installation").value
+          ) + 3000 + (mensualiteOffreGreen*5.5)
         ).toFixed(0)
       );
     } else {
@@ -680,7 +680,7 @@ async function GetTariffs(
   var make = {
     "all data ": [jsonToSend, { Montant: parseFloat(
       document.getElementById("Montant-TTC-de-l-installation").value
-    ) + 3000 , Montantinstalation: parseFloat(
+    ) + 3000 + (mensualiteOffreGreen*5.5), Montantinstalation: parseFloat(
       document.getElementById("Montant-TTC-de-l-installation").value
     )  }],
   };
