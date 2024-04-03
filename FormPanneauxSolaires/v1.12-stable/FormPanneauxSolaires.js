@@ -258,7 +258,7 @@ function calculerCapitalRestantDu(credit, index) {
   var Newmensualite =
     (montantPret * tauxInteretMensuel) /
     (1 - Math.pow(1 + tauxInteretMensuel, -dureePretMois));
-  var assurence = mensualite - Newmensualite;
+  var assurence = Newmensualite - mensualite;
   // Calculer le capital restant dû (formule 1)
   var capitalRestantDu =
     (Newmensualite *
@@ -505,10 +505,10 @@ async function GetTariffs(
       console.log($("#Frais-de-credit"));
       $("#Frais-de-credit").text(
         parseFloat(
-          3000+
+          
             parseFloat(
               document.getElementById("Montant-TTC-de-l-installation").value
-            ).toFixed(2)
+            ).toFixed(2) + 3000
         ).toFixed(0)
       );
     } else {
